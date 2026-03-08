@@ -88,6 +88,66 @@ void orange_first_search(int v, vector<vector<int>>& adj, vector<bool>& is_orang
 
 
 
+
+void best_2_downward_distances_orange(int v, vector<vector<int>>& adj,
+                               vector<pair<int, int>>& best_down_dists, vector<pair<int, int>>& best_down_dists_sources,
+                               vector<bool>& is_orange) {
+  int best = INT_BIG;
+  int second_best = INT_BIG;
+  int best_source = -1;
+  int second_best_source = -1;
+  fprintf(stderr, "is_orange[%d] = %d\n", v, (int)is_orange[v]);
+  if (is_orange[v]) {
+    best_down_dists[v] = {0, 0};
+    best_down_dists_sources[v] = {-1, -1};
+    for (int child : adj[v]) {
+      best_2_downward_distances_orange(child, adj, best_down_dists, best_down_dists_sources, is_orange);
+    }
+    return;
+  }
+  for (int child : adj[v]) {
+    best_2_downward_distances_orange(child, adj, best_down_dists, best_down_dists_sources, is_orange);
+    int dist = best_down_dists[child].first + 1; // can only use one from each child
+    if (dist < best) {
+      second_best = best;
+      second_best_source = best_source;
+      best = dist;
+      best_source = child;
+    } else if (dist < second_best) {
+      second_best = dist;
+      second_best_source = child;
+    }
+  }
+  best_down_dists[v] = {best, second_best};
+  best_down_dists_sources[v] = {best_source, second_best_source};
+}
+
+
+void best_upward_distances_orange(int v, vector<int>& parents, vector<vector<int>>& adj,
+                           vector<pair<int, int>>& best_down_dists, vector<pair<int, int>>& best_down_dists_sources, vector<int>& best_up_dists,
+                           vector<bool>& is_orange) {
+  if (parents[v] == -1) {
+    best_up_dists[v] = INT_BIG;
+  } else {
+    int best_up_distance = INT_BIG;
+    int parent = parents[v];
+    if (best_down_dists_sources[parent].first != v) { // can only use best if it doesn't just loop back to us
+      best_up_distance = min(best_up_distance, best_down_dists[parent].first + 1);
+    } else { // otherwise we can always use the second best
+      best_up_distance = min(best_up_distance, best_down_dists[parent].second + 1);
+    }
+    best_up_distance = min(best_up_distance, best_up_dists[parent] + 1);
+    best_up_dists[v] = best_up_distance;
+  }
+
+  for (int child : adj[v]) {
+    best_upward_distances_orange(child, parents, adj, best_down_dists, best_down_dists_sources, best_up_dists, is_orange);
+  }
+}
+
+
+
+
 void solve() {
   int n, k, root;
   cin >> n >> k >> root;
@@ -165,19 +225,33 @@ void solve() {
   }
 
   // Rerun distances but we want the upward distance to the closest orange
+  vector<pair<int, int>> best_down_dists_orange(n+1, {INT_BIG, INT_BIG});
+  vector<pair<int, int>> best_down_dists_sources_orange(n+1, {-1, -1});
+  best_2_downward_distances_orange(root, adj, best_down_dists_orange, best_down_dists_sources_orange, is_orange);
+  vector<int> best_up_dists_orange(n+1, INT_BIG);
+  best_upward_distances_orange(root, parents, adj, best_down_dists_orange, best_down_dists_sources_orange, best_up_dists_orange, is_orange);
 
-  fprintf(stderr, "distances to orange:\n");
+  fprintf(stderr, "Best downward distances to orange:\n");
   for (int i = 1; i <= n; i++) {
-    fprintf(stderr, "%d: %d\n", i, distances[i]);
+    fprintf(stderr, "%d: %d, %d  (from %d, %d)\n", i, best_down_dists_orange[i].first, best_down_dists_orange[i].second, best_down_dists_sources_orange[i].first, best_down_dists_sources_orange[i].second);
+  }
+  fprintf(stderr, "upward distances to orange:\n");
+  for (int i = 1; i <= n; i++) {
+    fprintf(stderr, "%d: %d\n", i, best_up_dists_orange[i]);
   }
 
-
-
-//  if (is_orange[root]) {
-//    cout << "YES\n";
-//  } else {
-//    cout << "NO\n";
-//  }
+  bool win = is_orange[root];
+  for (int green : green_nodes) {
+    if (best_up_dists_orange[green] <= k) {
+      win = true;
+      break;
+    }
+  }
+  if (win) {
+    cout << "YES\n";
+  } else {
+    cout << "NO\n";
+  }
 }
 
 
