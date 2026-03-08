@@ -2,7 +2,7 @@
 using namespace std;
 #define long long long
 
-//#define fprintf(...) // no-op
+#define fprintf(...) // no-op
 
 
 
@@ -78,18 +78,43 @@ void solve() {
 
 
   // Now calculating combinations for both
+  // The both-contribution needs to be calculated quickly
+  long best_so_far = 0;
   for (int left_col = 0; left_col < n-1; left_col++) {
+    long contrib_from_left = floodfill_results[left_col];
 
-
+    long contrib_both = contrib_from_left;
+    long wall_height_of_contrib_both = floodfill_highest_walls[left_col][left_col];
+    int ptr = left_col;
 
     for (int right_col = left_col + 1; right_col < n; right_col++) {
+      // Move from right_col-1 ---> right_col
+      // Update contrib if we end up cutting off some contrib
+      while (wall_height_of_contrib_both < floodfill_highest_walls[left_col][right_col]) {
+        // Need to delete row h1, then h1++ (and then maybe do it again)
+        // h1 height exists between right_col-1 and `j` (find using 2ptrs)
+        long h1 = wall_height_of_contrib_both;
+        while (ptr >= 0 && floodfill_highest_walls[left_col][ptr] <= h1) {
+          ptr--;
+        }
+        // ptr now points to 1 past the last column that has height <= h1
+        contrib_both -= (sorted_heights[h1+1] - sorted_heights[h1]) * (right_col - 1 - ptr);
+        wall_height_of_contrib_both++;
+      }
 
+      long contrib_from_right = floodfill_results[right_col];
+      best_so_far = max(best_so_far, contrib_from_left + contrib_from_right - contrib_both);
     }
   }
 
 
+  // Also you can place just 1 tile (if the double-loop never runs since the thing is only 1 wide)
+  for (int col = 0; col < n; col++) {
+    best_so_far = max(best_so_far, floodfill_results[col]);
+  }
 
 
+  cout << best_so_far << "\n";
 
 }
 
