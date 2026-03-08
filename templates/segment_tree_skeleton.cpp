@@ -21,7 +21,7 @@ private:
   vector<vector<int>> segments; // segments[l] contains 0 to 2^l - 1
 
 public:
-  SegmentTree(int max_layer) : max_layer(max_layer), n(exp(max_layer)), segments(max_layer + 1) {
+  explicit SegmentTree(int max_layer) : max_layer(max_layer), n(exp(max_layer)), segments(max_layer + 1) {
     // TODO: initialize
     segments[0] = vector<int>(n, 0);
 
@@ -42,7 +42,7 @@ public:
     }
   }
 
-  /* Range query a to right inclusive, 0-indexed */
+  /* Range query left to right inclusive, 0-indexed */
   int range_query(int left, int right) {
     // TODO: starting point for combiner function
     int answer = INT_MAX;
@@ -54,6 +54,7 @@ public:
         layer++;
         layer_i /= 2;
       }
+      // TODO: combiner function
       answer = min(answer, segments[layer][layer_i]);
       left += exp(layer);
     }
