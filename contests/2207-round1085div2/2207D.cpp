@@ -71,6 +71,20 @@ void best_upward_distances(int v, vector<int>& parents, vector<vector<int>>& adj
 }
 
 
+// for the record, i call it this because when i drew out my thoughts on paper i had an orange pen
+void orange_first_search(int v, vector<vector<int>>& adj, vector<bool>& is_orange) {
+  for (int child : adj[v]) {
+    orange_first_search(child, adj, is_orange);
+  }
+  int orange_children = 0;
+  for (int child : adj[v]) {
+    if (is_orange[child])  orange_children++;
+  }
+  if (orange_children >= 2) {
+    is_orange[v] = true;
+  }
+}
+
 
 
 
@@ -97,27 +111,73 @@ void solve() {
   }
 
 
-
   vector<pair<int, int>> best_down_dists(n+1, {INT_BIG, INT_BIG});
   vector<pair<int, int>> best_down_dists_sources(n+1, {-1, -1});
   best_2_downward_distances(root, adj, best_down_dists, best_down_dists_sources);
-
   fprintf(stderr, "Best downward distances:\n");
   for (int i = 1; i <= n; i++) {
     fprintf(stderr, "%d: %d, %d  (from %d, %d)\n", i, best_down_dists[i].first, best_down_dists[i].second, best_down_dists_sources[i].first, best_down_dists_sources[i].second);
   }
 
 
-
   vector<int> best_up_dists(n+1, INT_BIG);
   best_upward_distances(root, parents, adj, best_down_dists, best_down_dists_sources, best_up_dists);
-
   fprintf(stderr, "Best upward distances:\n");
   for (int i = 1; i <= n; i++) {
     fprintf(stderr, "%d: %d\n", i, best_up_dists[i]);
   }
 
 
+
+  // We obviously win if we reach a leaf node
+  vector<int> leaf_nodes;
+  for (int i = 1; i <= n; i++) {
+    if (adj[i].empty()) {
+      leaf_nodes.push_back(i);
+    }
+  }
+  // Find all orange nodes (we will win if we reach it, no matter what S does)
+  // If primary path is <= 1 and secondary path is <= k
+  vector<bool> is_orange(n+1, false);
+  for (int i = 1; i <= n; i++) {
+    if (best_down_dists[i].first <= 1 && best_down_dists[i].second <= k) {
+      is_orange[i] = true;
+    }
+  }
+  for (int v : leaf_nodes)  is_orange[v] = true;
+
+  // Now, we do a recursion
+  // If a node is connected to 2 orange nodes, it also becomes orange, since if we get there then you're screwed
+  orange_first_search(root, adj, is_orange);
+  fprintf(stderr, "Is orange:\n");
+  for (int i = 1; i <= n; i++) {
+    fprintf(stderr, "%d: %d\n", i, (int)is_orange[i]);
+  }
+
+
+
+  // Green node: if we get there, we force a move, so then see if we can get to an orange node within k distance
+  vector<int> green_nodes;
+  for (int i = 1; i <= n; i++) {
+    if (is_orange[i] && parents[i] != -1 && !is_orange[parents[i]]) {
+      green_nodes.push_back(parents[i]);
+    }
+  }
+
+  // Rerun distances but we want the upward distance to the closest orange
+
+  fprintf(stderr, "distances to orange:\n");
+  for (int i = 1; i <= n; i++) {
+    fprintf(stderr, "%d: %d\n", i, distances[i]);
+  }
+
+
+
+//  if (is_orange[root]) {
+//    cout << "YES\n";
+//  } else {
+//    cout << "NO\n";
+//  }
 }
 
 
