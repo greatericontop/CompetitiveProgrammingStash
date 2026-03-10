@@ -14,38 +14,39 @@ using namespace std;
  * Handwritten by me (might be slightly slow).
  */
 #define exp(x) (1 << (x))
-class SegmentTree {
+template <class T, class Combiner> class SegmentTree {
 private:
   int max_layer;
   int n;
-  vector<vector<int>> segments; // segments[l] contains 0 to 2^l - 1
+  vector<vector<T>> segments; // segments[l] contains 0 to 2^l - 1
+  Combiner combiner;
+  T combine_empty; // the identity/null element (e.g. 0 for sum, INT_MAX for min, etc.)
 
 public:
-  explicit SegmentTree(int max_layer) : max_layer(max_layer), n(exp(max_layer)), segments(max_layer + 1) {
+  explicit SegmentTree(int max_layer, Combiner combiner, T combine_empty)
+      : max_layer(max_layer), n(exp(max_layer)), segments(max_layer + 1),
+      combiner(combiner), combine_empty(combine_empty) {
     // TODO: initialize
-    segments[0] = vector<int>(n, 0);
+    segments[0] = vector<T>(n, 0);
 
     for (int layer = 1; layer <= max_layer; layer++) {
       for (int i = 0; i < exp(max_layer-layer); i++) {
-        // TODO: combiner function
-        segments[layer].push_back(min(segments[layer-1][2*i], segments[layer-1][2*i+1]));
+        segments[layer].push_back(combiner(segments[layer-1][2*i], segments[layer-1][2*i+1]));
       }
     }
   }
 
-  void point_update(int i, int new_value) {
+  void point_update(int i, T new_value) {
     segments[0][i] = new_value;
     for (int layer = 1; layer <= max_layer; layer++) {
       i /= 2;
-      // TODO: combiner function
-      segments[layer][i] = min(segments[layer-1][2*i], segments[layer-1][2*i+1]);
+      segments[layer][i] = combiner(segments[layer-1][2*i], segments[layer-1][2*i+1]);
     }
   }
 
   /* Range query left to right inclusive, 0-indexed */
-  int range_query(int left, int right) {
-    // TODO: starting point for combiner function
-    int answer = INT_MAX;
+  T range_query(int left, int right) {
+    T answer = combine_empty;
     while (left <= right) {
       // Find biggest interval (aka what's the biggest power of 2 that divides a)
       int layer_i = left;
@@ -54,8 +55,7 @@ public:
         layer++;
         layer_i /= 2;
       }
-      // TODO: combiner function
-      answer = min(answer, segments[layer][layer_i]);
+      answer = combiner(answer, segments[layer][layer_i]);
       left += exp(layer);
     }
     return answer;
@@ -68,25 +68,27 @@ public:
 
 void stresstest() {
   int n = 16384;
-  SegmentTree segment_tree(14);
+  auto min_combiner = [](int a, int b) { return min(a, b); };
+  SegmentTree<int, decltype(min_combiner)> segment_tree(14, min_combiner, INT_MAX);
+  mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
   cout << "Stresstesting...\n";
   vector<int> A(n);
   for (int i = 0; i < n; i++) {
-    A[i] = rand() % 10000;
+    A[i] = rng() % 10000;
     segment_tree.point_update(i, A[i]);
   }
   for (int bundle = 0; bundle < 10; bundle++) {
     for (int test = 0; test < 100'000; test++) {
-      int op = rand() % 2;
+      int op = rng() % 2;
       if (op == 0) {
-        int i = rand() % n;
-        int new_value = rand() % 10000;
+        int i = rng() % n;
+        int new_value = rng() % 10000;
         A[i] = new_value;
         segment_tree.point_update(i, new_value);
       } else {
-        int left = rand() % n;
-        int right = rand() % n;
+        int left = rng() % n;
+        int right = rng() % n;
         if (left > right) swap(left, right);
         int answer = INT_MAX;
         for (int i = left; i <= right; i++) {
@@ -105,7 +107,8 @@ void stresstest() {
 }
 
 int main() {
-  SegmentTree segment_tree(3); // n = 8
+  auto min_combiner = [](int a, int b) { return min(a, b); };
+  SegmentTree<int, decltype(min_combiner)> segment_tree(3, min_combiner, INT_MAX); // n = 8
   printf("Minimum from 0 to 7: %d\n", segment_tree.range_query(0, 7));
   segment_tree.point_update(3, -1);
   segment_tree.point_update(7, -10);
