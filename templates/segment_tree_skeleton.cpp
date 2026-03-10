@@ -23,11 +23,12 @@ private:
   T combine_empty; // the identity/null element (e.g. 0 for sum, INT_MAX for min, etc.)
 
 public:
-  explicit SegmentTree(int max_layer, Combiner combiner, T combine_empty)
+  explicit SegmentTree(int max_layer, Combiner combiner, T combine_empty, const vector<T>&& initialize)
       : max_layer(max_layer), n(exp(max_layer)), segments(max_layer + 1),
       combiner(combiner), combine_empty(combine_empty) {
-    // TODO: initialize
-    segments[0] = vector<T>(n, 0);
+    assert(initialize.size() <= n);
+    segments[0] = initialize;
+    while (segments[0].size() < n)  segments[0].push_back(combine_empty);
 
     for (int layer = 1; layer <= max_layer; layer++) {
       for (int i = 0; i < exp(max_layer-layer); i++) {
@@ -69,7 +70,7 @@ public:
 void stresstest() {
   int n = 16384;
   auto min_combiner = [](int a, int b) { return min(a, b); };
-  SegmentTree<int, decltype(min_combiner)> segment_tree(14, min_combiner, INT_MAX);
+  SegmentTree<int, decltype(min_combiner)> segment_tree(14, min_combiner, INT_MAX, vector<int>(n, 0));
   mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
   cout << "Stresstesting...\n";
@@ -108,7 +109,7 @@ void stresstest() {
 
 int main() {
   auto min_combiner = [](int a, int b) { return min(a, b); };
-  SegmentTree<int, decltype(min_combiner)> segment_tree(3, min_combiner, INT_MAX); // n = 8
+  SegmentTree<int, decltype(min_combiner)> segment_tree(3, min_combiner, INT_MAX, vector<int>(8, 0)); // n = 8
   printf("Minimum from 0 to 7: %d\n", segment_tree.range_query(0, 7));
   segment_tree.point_update(3, -1);
   segment_tree.point_update(7, -10);
