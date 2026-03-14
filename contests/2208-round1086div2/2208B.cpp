@@ -19,6 +19,12 @@ void solve() {
     }
   }
 
+  fprintf(stderr, "Initial Deck: ");
+  for (int c : cards) {
+    fprintf(stderr, "%d ", c);
+  }
+  fprintf(stderr, "\n\n");
+
   int num_win_cards = 0;
   while (m > 0) {
     // Pick cheapest card out of top k, or the win condition
@@ -29,6 +35,11 @@ void solve() {
         best = cards[i];
         best_i = i;
       }
+    }
+    if (m < abs(best)) {
+      // Can't afford any card, end game
+      // Otherwise WA on pre 2 :)
+      break;
     }
     if (best < 0) {
       // Win condition card
@@ -41,6 +52,11 @@ void solve() {
     // O(N) but fine
     cards.erase(cards.begin() + best_i);
     cards.push_back(best);
+    fprintf(stderr, "Deck: ");
+    for (int c : cards) {
+      fprintf(stderr, "%d ", c);
+    }
+    fprintf(stderr, "   m left = %d, victories = %d\n", m, num_win_cards);
   }
   cout << num_win_cards << "\n";
 }
