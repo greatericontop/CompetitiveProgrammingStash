@@ -33,7 +33,6 @@ vector<int> topo_sort(vector<vector<bool>>& adj, int n) {
 		}
 	}
 
-  assert(top_sort.size() == n); // assume it exists
   return top_sort;
 }
 
@@ -131,7 +130,7 @@ void solve() {
     }
   }
 
-  // Check acyclic
+  // Check acyclic (NO LONGER A STRONG ENOUGH CHECK SINCE WE DID NOT VERIFY A PROPER TC)
   for (int i = 1; i <= n; i++) {
     for (int j = i+1; j <= n; j++) {
       if (transitive_closure[i][j] && transitive_closure[j][i]) {
@@ -153,6 +152,11 @@ void solve() {
   // Then make own copy of the transitive closure
   // And then we can compare the original transitive closure to our own at the end
   vector<int> topo_order = topo_sort(transitive_closure, n);
+  if (topo_order.size() != n) {
+    // Not a DAG
+    cout << "NO\n";
+    return;
+  }
   fprintf(stderr, "Topo order: ");
   for (int x : topo_order)  fprintf(stderr, "%d ", x);
   fprintf(stderr, "\n");
