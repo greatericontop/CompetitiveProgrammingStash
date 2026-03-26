@@ -35,16 +35,6 @@ int64_t choose_mod(int64_t n, int64_t k) {
   return (top * modular_inverse(bottom)) % MOD;
 }
 
-/* O(log max(a, b)) */
-int64_t gcd(int64_t a, int64_t b) {
-  while (b) {
-    int64_t c = b;
-    b = a % b;
-    a = c;
-  }
-  return a;
-}
-
 
 
 
@@ -61,6 +51,7 @@ int main() {
   assert(choose_mod(57, 13) == 296022564LL);
   assert(choose_mod(1875, 22) == 252566709LL);
   assert(choose_mod(458723, 37102) == 577730621LL);
+  // std::gcd
   assert(gcd(12, 15) == 3);
   assert(gcd(132548923592LL, 128472357632LL) == 8);
   assert(gcd(3282296664LL, 14107131210LL) == 11240742LL);
