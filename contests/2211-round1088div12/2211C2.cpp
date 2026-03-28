@@ -38,15 +38,38 @@ void solve() {
       if (B[i] != -1) {
         B[i+k] = B[i];
       }
-      if (B[i+k] != -1) {
-        int j = i;
-        while (j >= 0 && B[j+k] != -1 && A[j] == A[j+k]) {
-          B[j] = B[j+k];
-          j -= k;
-        }
-      }
+    }
+    int j = i;
+    while (j >= k && A[j] == A[j-k] && B[j] != -1 && B[j-k] == -1) {
+      B[j-k] = B[j];
+      j -= k;
     }
   }
+
+  fprintf(stderr, "After forcing:\n");
+  for (int i = 0; i < n; i++) {
+    fprintf(stderr, "%d ", B[i]);
+  }
+  fprintf(stderr, "\n");
+
+
+//  multiset<int> A_s;
+//  multiset<int> B_s;
+//  for (int i = 0; i < k; i++) {
+//    A_s.insert(A[i]);
+//    if (B[i] != -1) {
+//      B_s.insert(B[i]);
+//    }
+//  }
+//  // B subset A
+//  for (int x : B_s) {
+//    auto it = A_s.find(x);
+//    if (it == A_s.end()) {
+//      cout << "NO\n";
+//      return;
+//    }
+//    A_s.erase(it);
+//  }
 
   // Check subset multisets
   // each[i] contains indices that store a number i
@@ -54,12 +77,9 @@ void solve() {
   for (int i = 0; i < k; i++) {
     each[A[i]].insert(i);
   }
-  fprintf(stderr, "%d\n", each[5].size());
   for (int i = 0; i < k; i++) {
     if (B[i] != -1) {
-      fprintf(stderr, "pre-check at %d, B[i] = %d\n", i, B[i]);
       if (each[B[i]].empty()) {
-        fprintf(stderr, "pre-check fail at %d\n", i);
         cout << "NO\n";
         return;
       }
@@ -78,7 +98,6 @@ void solve() {
 
     if (B[i] != -1) {
       if (each[B[i]].empty()) {
-        fprintf(stderr, "fail at %d\n", i);
         cout << "NO\n";
         return;
       }
