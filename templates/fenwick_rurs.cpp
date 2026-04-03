@@ -52,9 +52,55 @@ public:
 };
 
 
+template <class T> class FenwickRURS {
+private:
+  int n;
+  vector<T> prefix_sums;
+  Fenwick<T> suffix_adds;
+  Fenwick<T> suffix_subs;
+
+public:
+  explicit FenwickRURS(int n) : n(n), prefix_sums(n+1), suffix_adds(n), suffix_subs(n) {
+  }
+
+  void init(vector<T> values) {
+    prefix_sums[0] = 0;
+    for (int i = 1; i <= n; i++) {
+      prefix_sums[i] = prefix_sums[i-1] + values[i];
+    }
+    suffix_adds.init(vector<T>(n+1, 0));
+    suffix_subs.init(vector<T>(n+1, 0));
+  }
+
+  void suffix_add(int i, T value) {
+    suffix_adds.add(i, (n-i+1)*value);
+    suffix_subs.add(i, value);
+  }
+
+  /* Add value to [left, right] inclusive. */
+  void range_add(int left, int right, T value) {
+    suffix_add(left, value);
+    if (right < n) {
+      suffix_add(right+1, -value);
+    }
+  }
+
+  /* 1 to i inclusive */
+  T prefix_sum(int i) {
+    return prefix_sums[i] + suffix_adds.prefix_sum(i) - (n-i)*suffix_subs.prefix_sum(i);
+  }
+
+  /* left to right inclusive */
+  T range_sum(int left, int right) {
+    return prefix_sum(right) - prefix_sum(left-1);
+  }
+
+};
+
+
 void stresstest() {
   int n = 20000;
-  Fenwick<int> fenwick(n);
+  FenwickRURS<int> fenwick(n);
   mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
   cout << "Stresstesting...\n";
@@ -65,17 +111,16 @@ void stresstest() {
   fenwick.init(A);
   for (int bundle = 0; bundle < 10; bundle++) {
     for (int test = 0; test < 100'000; test++) {
-      int op = rng() % 4;
+      int op = rng() % 2;
       if (op == 0) {
-        int i = (rng() % n) + 1;
-        int new_value = rng() % 10000;
-        A[i] = new_value;
-        fenwick.set(i, new_value);
-      } else if (op == 1) {
-        int i = (rng() % n) + 1;
-        int offset = (rng() % 20000) - 10000;
-        A[i] += offset;
-        fenwick.add(i, offset);
+        int left = (rng() % n) + 1;
+        int right = (rng() % n) + 1;
+        if (left > right)  swap(left, right);
+        int amount = (rng() % 20000) - 10000;
+        fenwick.range_add(left, right, amount);
+        for (int i = left; i <= right; i++) {
+          A[i] += amount;
+        }
       } else {
         int left = (rng() % n) + 1;
         int right = (rng() % n) + 1;
@@ -84,7 +129,7 @@ void stresstest() {
         for (int i = left; i <= right; i++) {
           answer += A[i];
         }
-        int fen_answer = fenwick.prefix_sum(right) - fenwick.prefix_sum(left-1);
+        int fen_answer = fenwick.range_sum(left, right);
         if (answer != fen_answer) {
           fprintf(stderr, "Fenwick incorrect! expected %d, got %d\n", answer, fen_answer);
           exit(1);
