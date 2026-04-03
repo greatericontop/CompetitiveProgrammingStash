@@ -49,6 +49,11 @@ public:
     return sum;
   }
 
+  /* Range sum from left to right inclusive */
+  T range_sum(int left, int right) {
+    return prefix_sum(right) - prefix_sum(left-1);
+  }
+
 };
 
 
@@ -84,7 +89,9 @@ void stresstest() {
         for (int i = left; i <= right; i++) {
           answer += A[i];
         }
-        int fen_answer = fenwick.prefix_sum(right) - fenwick.prefix_sum(left-1);
+        int fen_answer = fenwick.range_sum(left, right);
+        int fen_answer_2 = fenwick.prefix_sum(right) - fenwick.prefix_sum(left-1);
+        assert(fen_answer == fen_answer_2);
         if (answer != fen_answer) {
           fprintf(stderr, "Fenwick incorrect! expected %d, got %d\n", answer, fen_answer);
           exit(1);
