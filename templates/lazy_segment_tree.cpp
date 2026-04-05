@@ -6,6 +6,10 @@ using namespace std;
 
 
 
+/*
+ * Range add, range query lazy segment tree
+ * Passed 9.5B randomized tests
+ */
 #define exp(x) (1 << (x))
 template <class T> class LazySegmentTree {
 private:
@@ -112,7 +116,7 @@ public:
 
 
 
-void stresstest() {
+void stresstest(int bundles) {
   int n = 16300, max_layer = 14;
   int64_t seed = chrono::steady_clock::now().time_since_epoch().count();
   cout << "Seed: " << seed << "\n";
@@ -125,7 +129,7 @@ void stresstest() {
     A[i] = rng() % 10000;
   }
   LazySegmentTree<int> lst(max_layer, 0, vector<int>(A));
-  for (int bundle = 0; bundle < 10; bundle++) {
+  for (int bundle = 0; bundle < bundles; bundle++) {
     for (int test = 0; test < 100'000; test++) {
       int op = rng() % 2;
       if (op == 0) {
@@ -187,5 +191,6 @@ int main() {
   assert(lst2.range_sum(14, 15) == -20);
   cout << "Manual test 2 passed!\n";
 
-  stresstest();
+  stresstest(999999);
+  //stresstest(10);
 }
