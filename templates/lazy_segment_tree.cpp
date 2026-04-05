@@ -27,7 +27,6 @@ public:
     segments[0] = initialize;
     while (segments[0].size() < n)  segments[0].push_back(zero);
     tags[0] = vector<T>(n, zero);
-
     for (int layer = 1; layer <= max_layer; layer++) {
       for (int i = 0; i < exp(max_layer-layer); i++) {
         segments[layer].push_back(segments[layer-1][2*i] + segments[layer-1][2*i+1]);
@@ -53,7 +52,6 @@ public:
       tags[layer][i] += amount;
       return;
     }
-    //fprintf(stderr, "  upd layer %d i %d (spanning %d...%d) %d to %d\n", layer, i, i*exp(layer), i*exp(layer)+seg_size-1, l, r);
     // Update subsegments
     if (l <= child_seg_size-1) {
       _range_update(layer-1, 2*i, l, min(r, child_seg_size-1), amount);
@@ -65,7 +63,6 @@ public:
     T new_sum = segments[layer-1][2*i] + child_seg_size*tags[layer-1][2*i]
         + segments[layer-1][2*i+1] + child_seg_size*tags[layer-1][2*i+1];
     segments[layer][i] = new_sum;
-    //fprintf(stderr, "  layer %d i %d (spanning %d...%d) has new sum %d = %d + %d*%d + %d + %d*%d\n", layer, i, i*exp(layer), i*exp(layer)+seg_size-1, new_sum, segments[layer-1][2*i], child_seg_size, tags[layer-1][2*i], segments[layer-1][2*i+1], child_seg_size, tags[layer-1][2*i+1]);
   }
 
   /*
@@ -84,10 +81,8 @@ public:
     assert(l >= 0 && r < seg_size);
     assert(l <= r);
     if (l == 0 && r == seg_size-1) {
-      //fprintf(stderr, "  leaf segment layer %d, i %d, sum %d, updatedaccumulator %d, return %d\n", layer, i, segments[layer][i], updated_accumulator, segments[layer][i] + seg_size*updated_accumulator);
       return segments[layer][i] + seg_size*updated_accumulator;
     }
-
     T ret = zero;
     if (l <= child_seg_size-1) {
       ret += _range_sum(layer-1, 2*i, l, min(r, child_seg_size-1), updated_accumulator);
