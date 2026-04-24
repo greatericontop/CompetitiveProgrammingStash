@@ -8,17 +8,21 @@ using namespace std;
 
 
 #ifdef GREATERIC_DEBUG
-  #define PRINTVEC(vec) \
-  do { \
+  #define PRINTVEC(vec) do { \
     fprintf(stderr, "%s:  ", #vec); \
-    for (const auto& _x : vec)  fprintf(stderr, "%d ", _x); \
+    for (const auto& _x : (vec))  fprintf(stderr, "%d ", _x); \
     fprintf(stderr, "\n"); \
   } while (0)
-  #define PRINTMAP(map) \
-  do { \
+  #define PRINTMAP(map) do { \
     fprintf(stderr, "%s:  ", #map); \
-    for (const auto& _p : map)  fprintf(stderr, "%d->%d ", _p.first, _p.second); \
+    for (const auto& _p : (map))  fprintf(stderr, "%d->%d ", _p.first, _p.second); \
     fprintf(stderr, "\n"); \
+  } while (0)
+  #define DEBUGFOREACH(vec, stmt) do { \
+    fprintf(stderr, "%s:  ", #vec); \
+    for (const auto& x : (vec)) { \
+      stmt; \
+    } \
   } while (0)
   #pragma GCC diagnostic error "-Wall"
   #pragma GCC diagnostic error "-Wextra"
