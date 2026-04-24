@@ -3,7 +3,7 @@ using namespace std;
 #define long long long
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 //#define STRESSTESTING
 
 
@@ -51,21 +51,45 @@ void solve() {
   cin >> n;
   string s, t;
   cin >> s >> t;
+  s += '$'; // placeholder
+  t += '$';
 
   if (s[0] != t[0] || s[n-1] != t[n-1]) {
     cout << "-1\n";
     return;
   }
-  int ct = 0;
+  long ct = 0;
 
-  char cur_block = s[0];
   int i = 0;
-  for (int j = 1; j < n; j++) {
-    if (s[j] != cur_block) {
-      // block just ended
+  int j = 0;
+  for (int block = 0; true; block++) {
+    if ((i == n && j != n) || (i != n && j == n)) {
+      // unequal blocks
+      cout << "-1\n";
+      return;
+    }
+    if (i == n && j == n) {
+      break;
     }
 
+    int i0 = i, j0 = j;
+    assert(s[i] == t[j]);
+    while (s[i] == s[i+1])  i++;
+    while (t[j] == t[j+1])  j++;
+    i++; j++; // now they point to the next block
+
+    //int ct0 = ct;
+    // Copy s to t
+    if (i < j) {
+      ct += (long) (j - i);
+    }
+    if (j0 < i0) {
+      ct += (long) (i0 - j0);
+    }
+    fprintf(stderr, "block %d: i0=%d, j0=%d, i=%d, j=%d, count += %d\n", block, i0, j0, i, j, ct - ct0);
   }
+
+  cout << ct << "\n";
 
 }
 
