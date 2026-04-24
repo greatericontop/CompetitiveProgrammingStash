@@ -43,7 +43,7 @@ void solve() {
   cin >> n;
   //
   // Don't forget to enable compiler options
-  //   -fsanitize=undefined -fsanitize=address -fno-sanitize-recover=undefined -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wconversion -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
+  //   -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wconversion -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
   //
 
 }
