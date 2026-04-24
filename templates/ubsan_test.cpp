@@ -39,13 +39,9 @@ using namespace std;
 
 
 void solve() {
-  int n;
-  cin >> n;
-  //
-  // Don't forget to enable compiler options
-  //   -fsanitize=undefined -fsanitize=address -fno-sanitize-recover=undefined -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wconversion -Wno-error=unused-variable -Wno-error=unused-parameter -O1
-  //
-
+  int x, y;
+  cin >> x >> y;
+  cout << "The sum is " << x + y << "\n";
 }
 
 
