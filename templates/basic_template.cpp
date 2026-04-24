@@ -4,7 +4,7 @@ using namespace std;
 
 
 #define GREATERIC_DEBUG
-#define STRESSTESTING
+//#define STRESSTESTING
 
 
 #ifdef GREATERIC_DEBUG
