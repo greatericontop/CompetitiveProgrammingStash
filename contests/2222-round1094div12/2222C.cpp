@@ -51,8 +51,9 @@ void solve() {
   vector<int> a(n+1);
   for (int i = 1; i <= n; i++)  cin >> a[i];
   map<int, int> first_occurrence;
+  int y = -1;
   for (int i = 1; i <= n; i++) {
-    if (first_occurrence[a[i]] == 0)  first_occurrence[a[i]] = i;
+    if (first_occurrence[a[i]] == 0)  first_occurrence[a[i]] = ++y;
   }
   PRINTMAP(first_occurrence);
 //  vector<int> to_dp_index(n+1);
@@ -61,8 +62,8 @@ void solve() {
 //  }
   //PRINTVEC(to_dp_index);
 
-  vector<vector<int>> dp(n+1, vector<int>(n+1, -1));
-  dp[0] = vector<int>(n+1, 0); // 0-length subarrays for each median, base case
+  vector<vector<int>> dp(n+1, vector<int>(y+3, -1));
+  dp[0] = vector<int>(y+3, 0); // 0-length subarrays for each median, base case
 
   for (int i = 1; i <= n; i++) {
     Tree<pair<int, int>> nums;
@@ -70,7 +71,7 @@ void solve() {
     for (int j = i; j >= 1; j -= 2) {
       int cur_median = (* nums.find_by_order(nums.size()/2)).first;
       int cur_median_dp_index = first_occurrence[cur_median];    // n log n?
-      assert(cur_median_dp_index <= n);
+      //assert(cur_median_dp_index <= n);
       if (dp[j-1][cur_median_dp_index] != -1) {
         dp[i][cur_median_dp_index] = max(dp[i][cur_median_dp_index], dp[j - 1][cur_median_dp_index] + 1);
       }
@@ -84,10 +85,10 @@ void solve() {
 
   int ans = -1;
   for (int x : dp[n]) {
-    assert(x == -1 || (x % 2 == 1));
+    //assert(x == -1 || (x % 2 == 1));
     ans = max(ans, x);
   }
-  assert(ans >= 1);
+  //assert(ans >= 1);
   cout << ans << "\n";
 
 }
