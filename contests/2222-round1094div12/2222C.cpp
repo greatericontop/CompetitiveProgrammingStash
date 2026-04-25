@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define long long long
+//#define long long long
 
 
 //#define GREATERIC_DEBUG
@@ -28,6 +28,13 @@ using namespace std;
   #define PRINTVEC(...) // no-op
   #define PRINTMAP(...) // no-op
 #endif
+
+
+	#include <ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
+template <class T>
+using Tree =
+    tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 
 
@@ -58,11 +65,10 @@ void solve() {
   dp[0] = vector<int>(n+1, 0); // 0-length subarrays for each median, base case
 
   for (int i = 1; i <= n; i++) {
-    vector<int> nums;
-    nums.push_back(a[i]);
+    Tree<pair<int, int>> nums;
+    nums.insert({a[i], i});
     for (int j = i; j >= 1; j -= 2) {
-      nth_element(nums.begin(), nums.begin() + nums.size()/2, nums.end());
-      int cur_median = nums[nums.size()/2];
+      int cur_median = (* nums.find_by_order(nums.size()/2)).first;
       int cur_median_dp_index = first_occurrence[cur_median];    // n log n?
       assert(cur_median_dp_index <= n);
       if (dp[j-1][cur_median_dp_index] != -1) {
@@ -70,8 +76,8 @@ void solve() {
       }
       // transition to next
       if (j - 2 >= 1) {
-        nums.push_back(a[j-1]);
-        nums.push_back(a[j-2]);
+        nums.insert({a[j-1], j-1});
+        nums.insert({a[j-2], j-2});
       }
     }
   }
