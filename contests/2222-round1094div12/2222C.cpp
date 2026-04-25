@@ -3,7 +3,7 @@ using namespace std;
 //#define long long long
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -52,16 +52,18 @@ void solve() {
   for (int i = 1; i <= n; i++)  cin >> a[i];
   fprintf(stderr, "input read\n");
   map<int, int> first_occurrence;
-  int y = -1;
+  vector<int> to_i(n+1);
+  int y = 0;
   for (int i = 1; i <= n; i++) {
     if (first_occurrence[a[i]] == 0)  first_occurrence[a[i]] = ++y;
+    to_i[i] = first_occurrence[a[i]];
   }
   //PRINTMAP(first_occurrence);
 //  vector<int> to_dp_index(n+1);
 //  for (int i = 1; i <= n; i++) {
 //    to_dp_index[i] = first_occurrence[a[i]];
 //  }
-  //PRINTVEC(to_dp_index);
+  PRINTVEC(to_i);
 
   vector<vector<int>> dp(n+1, vector<int>(y+3, -1));
   dp[0] = vector<int>(y+3, 0); // 0-length subarrays for each median, base case
@@ -70,8 +72,9 @@ void solve() {
     Tree<pair<int, int>> nums;
     nums.insert({a[i], i});
     for (int j = i; j >= 1; j -= 2) {
-      int cur_median = (* nums.find_by_order(nums.size()/2)).first;
-      int cur_median_dp_index = first_occurrence[cur_median];    // n log n?
+      auto & cur_median_pair = (* nums.find_by_order(nums.size()/2));
+      int cur_median = cur_median_pair.first;
+      int cur_median_dp_index = to_i[cur_median_pair.second];
       //assert(cur_median_dp_index <= n);
       if (dp[j-1][cur_median_dp_index] != -1) {
         dp[i][cur_median_dp_index] = max(dp[i][cur_median_dp_index], dp[j - 1][cur_median_dp_index] + 1);
