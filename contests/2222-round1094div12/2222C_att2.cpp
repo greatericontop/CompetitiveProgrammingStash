@@ -71,6 +71,10 @@ void solve() {
         ct_m = 0;
       }
     }
+    if (ct_l != 0 || ct_r != 0 || ct_m != 0) {
+      // incomplete
+      continue;
+    }
     best_ans = max(best_ans, cur_ans);
   }
 
