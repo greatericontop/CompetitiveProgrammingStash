@@ -3,7 +3,7 @@ using namespace std;
 //#define long long long
 
 
-//#define GREATERIC_DEBUG
+#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -50,12 +50,13 @@ void solve() {
   cin >> n;
   vector<int> a(n+1);
   for (int i = 1; i <= n; i++)  cin >> a[i];
+  fprintf(stderr, "input read\n");
   map<int, int> first_occurrence;
   int y = -1;
   for (int i = 1; i <= n; i++) {
     if (first_occurrence[a[i]] == 0)  first_occurrence[a[i]] = ++y;
   }
-  PRINTMAP(first_occurrence);
+  //PRINTMAP(first_occurrence);
 //  vector<int> to_dp_index(n+1);
 //  for (int i = 1; i <= n; i++) {
 //    to_dp_index[i] = first_occurrence[a[i]];

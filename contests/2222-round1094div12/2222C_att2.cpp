@@ -3,7 +3,7 @@ using namespace std;
 //#define long long long
 
 
-//#define GREATERIC_DEBUG
+#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -64,7 +64,7 @@ void solve() {
       else if (a[i] > med)  ct_r++;
       else  ct_m++;
 
-      if ((ct_l + ct_r + ct_m) % 2 == 1 && (ct_m >= 1) && ((ct_l + ct_m > ct_r) || (ct_r + ct_m > ct_l))) {
+      if ((ct_l + ct_r + ct_m) % 2 == 1 && (ct_m >= 1) && ((ct_l + ct_m > ct_r) && (ct_r + ct_m > ct_l))) {
         cur_ans++;
         ct_l = 0;
         ct_r = 0;
@@ -72,11 +72,13 @@ void solve() {
       }
     }
     if (ct_l != 0 || ct_r != 0 || ct_m != 0) {
+      fprintf(stderr, "median %d, leftover %d %d %d\n", med, ct_l, ct_m, ct_r);
       if (ct_l != ct_r) {
         // last one can be extended
         continue;
       }
     }
+    fprintf(stderr, "cur ans = %d for median %d\n", cur_ans, med);
     best_ans = max(best_ans, cur_ans);
   }
 
