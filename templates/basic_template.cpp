@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define long long long
 
 
 #define GREATERIC_DEBUG
@@ -28,6 +27,10 @@ using namespace std;
   #define PRINTVEC(...) // no-op
   #define PRINTMAP(...) // no-op
 #endif
+#define long long long
+#define pb push_back
+using pairii = pair<int, int>;
+using pairll = pair<long, long>;
 
 
 
