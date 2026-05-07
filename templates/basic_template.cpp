@@ -29,6 +29,7 @@ using namespace std;
 #endif
 #define long long long
 #define pb push_back
+#define LONG(x) ((long) (x))
 using pairii = pair<int, int>;
 using pairll = pair<long, long>;
 
@@ -44,10 +45,7 @@ using pairll = pair<long, long>;
 void solve() {
   int n;
   cin >> n;
-  //
-  // Don't forget to enable compiler options
-  //   -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
-  //
+  // -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
 
 }
 
@@ -63,7 +61,7 @@ void solve() {
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
-  int t;
+  int t = 1;
   cin >> t;
   while (t--)  solve();
   return 0;
