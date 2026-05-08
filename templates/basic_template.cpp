@@ -11,21 +11,33 @@ using namespace std;
     for (const auto& _x : (vec))  fprintf(stderr, "%d ", _x); \
     fprintf(stderr, "\n"); \
   } while (0)
-  #define PRINTMAP(map) do { \
-    fprintf(stderr, "%s:  ", #map); \
-    for (const auto& _p : (map))  fprintf(stderr, "%d->%d ", _p.first, _p.second); \
+  #define PRINTVECL(vec) do { \
+    fprintf(stderr, "%s:  ", #vec); \
+    for (const auto& _x : (vec))  fprintf(stderr, "%lld ", _x); \
     fprintf(stderr, "\n"); \
   } while (0)
-  #define DEBUGFOREACH(vec, stmt) do { \
-    fprintf(stderr, "%s:  ", #vec); \
-    for (const auto& x : (vec)) { \
-      stmt; \
-    } \
+  #define PRINTMAP(map) do { \
+    fprintf(stderr, "%s:   ", #map); \
+    for (const auto& _p : (map))  fprintf(stderr, "%d->%d  ", _p.first, _p.second); \
+    fprintf(stderr, "\n"); \
+  } while (0)
+  #define PRINTVECP(vec) do { \
+    fprintf(stderr, "%s:   ", #vec); \
+    for (const auto& _p : (vec))  fprintf(stderr, "[%d %d],  ", _p.first, _p.second); \
+    fprintf(stderr, "\n"); \
+  } while (0)
+  #define PRINTVECPL(vec) do { \
+    fprintf(stderr, "%s:   ", #vec); \
+    for (const auto& _p : (vec))  fprintf(stderr, "[%lld %lld],  ", _p.first, _p.second); \
+    fprintf(stderr, "\n"); \
   } while (0)
 #else
-  #define fprintf(...) // no-op
-  #define PRINTVEC(...) // no-op
-  #define PRINTMAP(...) // no-op
+  #define fprintf(...)
+  #define PRINTVEC(...)
+  #define PRINTVECL(...)
+  #define PRINTMAP(...)
+  #define PRINTVECP(...)
+  #define PRINTVECPL(...)
 #endif
 #define long long long
 #define pb push_back
