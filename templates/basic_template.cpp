@@ -42,6 +42,7 @@ using namespace std;
 #define long long long
 #define pb push_back
 #define LONG(x) ((long) (x))
+#define INT(x) ((int) (x))
 #define FORI(x) for (int i = 0; i < (x); i++)
 using pairii = pair<int, int>;
 using pairll = pair<long, long>;
@@ -49,6 +50,8 @@ using AdjList = vector<vector<int>>;
 // Positive numbers only
 constexpr static inline int ceildiv(int a, int b) { return (a + b - 1) / b; }
 constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; }
+// Only O(1) for vectors!
+template <typename It, typename Container> constexpr static inline int itertoi(const It& it, const Container& container) { return distance(container.begin(), it); }
 
 
 
