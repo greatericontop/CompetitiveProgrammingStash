@@ -82,6 +82,7 @@ void solve() {
     temp /= 10;
     numdigitsina++;
   }
+  if (numdigitsina == 0)  numdigitsina = 1;
 
   // find first num >= a
   long l = 0, r = (1<<numdigitsina)-1;
@@ -98,7 +99,7 @@ void solve() {
   }
 
   fprintf(stderr, "ended with masks %lld, %lld\n", l, l-1);
-  long x1 = calcnumformask(l-1, numdigitsina-1, digits);
+  long x1 = calcnumformask(l == 0 ? 0 : l-1, numdigitsina-1, digits);
   long x2 = calcnumformask(l, numdigitsina-1, digits);
   fprintf(stderr, "numbers %lld, %lld\n", x1, x2);
 
@@ -107,6 +108,9 @@ void solve() {
   for (int i = 0; i < numdigitsina-1; i++) {
     x3 *= 10;
     x3 += digits[1];
+  }
+  if (x3 == 0 && digits[0] != 0) {
+    x3 = LONG(2e18);
   }
   fprintf(stderr, "number with one less digit: %lld\n", x3);
   long x4 = 0;
