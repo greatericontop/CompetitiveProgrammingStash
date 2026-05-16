@@ -63,8 +63,19 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 
 
 void solve() {
-  int n, x1, x2;
-  cin >> n >> x1 >> x2;
+  int n, x1, x2, k;
+  cin >> n >> x1 >> x2 >> k;
+  if (x1 > x2)  swap(x1, x2);
+
+  int dist1 = x2 - x1;
+  int dist2 = n - dist1;
+  int dist = min(dist1, dist2);
+
+  if (n == 2 || n == 3) {
+    cout << 1 << "\n";
+  } else {
+    cout << (dist+k) << "\n";
+  }
 
 
 }
