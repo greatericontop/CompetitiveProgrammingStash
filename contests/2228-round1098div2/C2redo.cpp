@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -148,6 +148,10 @@ void solve() {
     cout << a << "\n";
     return;
   }
+  if (a == 0) {
+    cout << *digits.begin() << "\n";
+    return;
+  }
   int max_digit = *digits.rbegin();
   int min_digit = *digits.begin();
   int min_digit_nonzero = min_digit == 0 ? *next(digits.begin()) : min_digit;
@@ -190,6 +194,9 @@ void solve() {
     for (int i = 0; i < av_digits - 1; i++) {
       below = below * 10 + max_digit;
     }
+  }
+  if (below == 0 && digits.count(0) == 0) {
+    below = LONG(2e18);
   }
   fprintf(stderr, "below: %lld\n", below);
 
