@@ -82,6 +82,10 @@ void solve() {
   }
   vector<int> all_x_coordinates;
   for (int x : all_x_coordinates_s)  all_x_coordinates.pb(x);
+  vector<int> coord_to_index(n+1);
+  for (int i = 0; i < (int) all_x_coordinates.size(); i++) {
+    coord_to_index[all_x_coordinates[i]] = i;
+  }
   auto by_x = [](const Point& a, const Point& b) {
     if (a.x != b.x)  return a.x < b.x;
     return a.y < b.y;
@@ -91,38 +95,45 @@ void solve() {
   };
   sort(points.begin(), points.end(), by_y);
 
-  set<Point, decltype(by_x)> top(by_x);
-  set<Point, decltype(by_x)> bottom(by_x);
-  for (Point p : points)  top.insert(p);
+
+  //precompute prefix/suffix min/max to save time in the loop
+  vector<int> prefix_max(n);
+  vector<int> prefix_min(n);
+  prefix_min[0] = points[0].x;
+  prefix_max[0] = points[0].x;
+  for (int i = 1; i < n; i++) {
+    prefix_min[i] = min(prefix_min[i-1], points[i].x);
+    prefix_max[i] = max(prefix_max[i-1], points[i].x);
+  }
+  vector<int> suffix_max(n);
+  vector<int> suffix_min(n);
+  suffix_min[n-1] = points[n-1].x;
+  suffix_max[n-1] = points[n-1].x;
+  for (int i = n-2; i >= 0; i--) {
+    suffix_min[i] = min(suffix_min[i+1], points[i].x);
+    suffix_max[i] = max(suffix_max[i+1], points[i].x);
+  }
+
 
   long ans = 0;
   // Sweep
   for (int i = 0; i < n; i++) {
-    top.erase(points[i]);
-    bottom.insert(points[i]);
     if (i < n-1 && points[i].y == points[i+1].y) {
       // process next point before calculating
       continue;
     }
-    if (top.empty() || bottom.empty()) {
+    if (i == n-1) {
+      // guaranteed points in top and bottom
       continue;
     }
 
-    fprintf(stderr, "----- i=%d -----\n", i);
-    fprintf(stderr, "top:   ");
-    //for (const Point& p : top)  p.print();
-    fprintf(stderr, "\nbottom:   ");
-    //for (const Point& p : bottom)  p.print();
-    fprintf(stderr, "\n");
-
-    int xmin = max(top.begin()->x, bottom.begin()->x);
-    int xmax = min(top.rbegin()->x, bottom.rbegin()->x);
+    int xmin = max(prefix_min[i], suffix_min[i+1]);
+    int xmax = min(prefix_max[i], suffix_max[i+1]);
     if (xmax < xmin) {
       continue;
     }
-    auto it1 = lower_bound(all_x_coordinates.begin(), all_x_coordinates.end(), xmin);
-    auto it2 = lower_bound(all_x_coordinates.begin(), all_x_coordinates.end(), xmax);
-    assert(it1 != all_x_coordinates.end() && it2 != all_x_coordinates.end());
+    int it2 = coord_to_index[xmax];
+    int it1 = coord_to_index[xmin];
     assert(it2 - it1 >= 0);
     ans += it2 - it1;
   }
