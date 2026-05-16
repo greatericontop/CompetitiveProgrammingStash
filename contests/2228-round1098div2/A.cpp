@@ -65,8 +65,24 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 void solve() {
   int n;
   cin >> n;
+  vector<int> a(n);
+  FORI(n)  cin >> a[i];
+  int count_0 = 0, count_1 = 0, count_2 = 0;
+  for (int x : a) {
+    if (x == 0)  count_0++;
+    else if (x == 1)  count_1++;
+    else  count_2++;
+  }
 
-
+  int ops = 0;
+  ops += count_0;
+  int onetwo = min(count_1, count_2);
+  ops += onetwo;
+  count_1 -= onetwo;
+  count_2 -= onetwo;
+  ops += count_1 / 3;
+  ops += count_2 / 3;
+  cout << ops << "\n";
 }
 
 

@@ -63,9 +63,9 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 
 
 void solve() {
-  int n;
-  cin >> n;
-  // -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
+  int n, x1, x2;
+  cin >> n >> x1 >> x2;
+
 
 }
 
