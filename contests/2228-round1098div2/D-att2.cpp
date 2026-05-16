@@ -55,6 +55,9 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 
 
 
+#pragma GCC optimize("O3")
+#pragma GCC target("avx2")
+
 
 
 
@@ -65,31 +68,33 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 struct Point {
   int x;
   int y;
-
-  void print() const {
-    fprintf(stderr, "(%d, %d) ", x, y);
-  }
 };
 
 void solve() {
   int n;
   cin >> n;
   vector<Point> points(n);
-  set<int> all_x_coordinates_s;
   for (int i = 0; i < n; i++) {
     cin >> points[i].x >> points[i].y;
-    all_x_coordinates_s.insert(points[i].x);
   }
+
+  auto by_x = [](const Point& a, const Point& b) {
+    return a.x < b.x;
+  };
+  sort(points.begin(), points.end(), by_x);
+
   vector<int> all_x_coordinates;
-  for (int x : all_x_coordinates_s)  all_x_coordinates.pb(x);
+  for (int i = 0; i < n; i++) {
+    if (i == 0 || points[i].x != points[i-1].x) {
+      all_x_coordinates.pb(points[i].x);
+    }
+  }
   vector<int> coord_to_index(n+1);
   for (int i = 0; i < (int) all_x_coordinates.size(); i++) {
     coord_to_index[all_x_coordinates[i]] = i;
   }
-  auto by_x = [](const Point& a, const Point& b) {
-    if (a.x != b.x)  return a.x < b.x;
-    return a.y < b.y;
-  };
+
+
   auto by_y = [](const Point& a, const Point& b) {
     return a.y < b.y;
   };
