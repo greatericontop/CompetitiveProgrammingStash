@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -61,11 +61,145 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 
 
 
+long vectonum(const vector<int>& v) {
+  long ret = 0;
+  for (int d : v) {
+    ret = ret * 10 + d;
+  }
+  return ret;
+}
+
+
+long afill(long a, const vector<int>& av, vector<int>& alreadyfilled, const set<int>& digits) {
+  if (alreadyfilled.size() == av.size()) {
+    return vectonum(alreadyfilled);
+  }
+  // try overshooting current digit
+  auto it = digits.upper_bound(av[alreadyfilled.size()]);
+  if (it == digits.end())  it = prev(it);
+  vector<int> alreadyfilled1 = alreadyfilled;
+  alreadyfilled1.pb(*it);
+  for (int i = alreadyfilled1.size(); i < av.size(); i++) {
+    alreadyfilled1.pb(*digits.begin());  //min digit
+  }
+  long overshoot_val = vectonum(alreadyfilled1);
+
+  // try correctshooting it
+  long correctshoot_val = -1;
+  if (digits.count(av[alreadyfilled.size()])) {
+    vector<int> alreadyfilled2 = alreadyfilled;
+    alreadyfilled2.pb(av[alreadyfilled.size()]);
+    correctshoot_val = afill(a, av, alreadyfilled2, digits);
+  }
+
+  //fprintf(stderr, "overshoot_val: %lld, correctshoot_val: %lld\n", overshoot_val, correctshoot_val);
+
+  long better = min(overshoot_val, correctshoot_val);
+  long worse = max(overshoot_val, correctshoot_val);
+  if (better >= a) {
+    //fprintf(stderr, "ret %lld, because >= %lld\n", better, a);
+    return better;
+  } else {
+    //fprintf(stderr, "ret %lld\n", worse);
+    return worse;
+  }
+}
+
+
+long belowfill(long a, const vector<int>& av, vector<int>& alreadyfilled, const set<int>& digits) {
+  if (alreadyfilled.size() == av.size()) {
+    return vectonum(alreadyfilled);
+  }
+  // try under current digit
+  auto it = digits.lower_bound(av[alreadyfilled.size()]);
+  if (it != digits.begin())  it = prev(it);
+  vector<int> alreadyfilled1 = alreadyfilled;
+  alreadyfilled1.pb(*it);
+  for (int i = alreadyfilled1.size(); i < av.size(); i++) {
+    alreadyfilled1.pb(*digits.rbegin());  //max digit
+  }
+  long overshoot_val = vectonum(alreadyfilled1);
+
+  // try correctshooting it
+  long correctshoot_val = LONG(5e18);
+  if (digits.count(av[alreadyfilled.size()])) {
+    vector<int> alreadyfilled2 = alreadyfilled;
+    alreadyfilled2.pb(av[alreadyfilled.size()]);
+    correctshoot_val = belowfill(a, av, alreadyfilled2, digits);
+  }
+
+  //fprintf(stderr, "overshoot_val: %lld, correctshoot_val: %lld\n", overshoot_val, correctshoot_val);
+
+  long better = max(overshoot_val, correctshoot_val);
+  long worse = min(overshoot_val, correctshoot_val);
+  if (better <= a) {
+    //fprintf(stderr, "ret %lld, because <= %lld\n", better, a);
+    return better;
+  } else {
+    //fprintf(stderr, "ret %lld\n", worse);
+    return worse;
+  }
+}
+
 
 void solve() {
-  int n;
-  cin >> n;
-  // -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
+  long a; int n;
+  cin >> a >> n;
+  set<int> digits;
+  for (int i = 0; i < n; i++) {
+    int d; cin >> d;
+    digits.insert(d);
+  }
+  if (digits.size() == 1 && *digits.begin() == 0) {
+    cout << a << "\n";
+    return;
+  }
+  int max_digit = *digits.rbegin();
+  int min_digit = *digits.begin();
+  int min_digit_nonzero = min_digit == 0 ? *next(digits.begin()) : min_digit;
+
+  long a1 = a;
+  vector<int> av;
+  while (a1 > 0) {
+    av.pb(a1 % 10);
+    a1 /= 10;
+  }
+  reverse(av.begin(), av.end());
+
+  PRINTVEC(av);
+
+  int av_digits = av.size();
+  long max_number_same_digits = max_digit;
+  for (int i = 1; i < av_digits; i++) {
+    max_number_same_digits = max_number_same_digits * 10 + max_digit;
+  }
+  fprintf(stderr, "max_number_same_digits: %lld\n", max_number_same_digits);
+
+  long above = 0;
+  if (max_number_same_digits < a) {
+    above = min_digit_nonzero;
+    for (int i = 0; i < av_digits; i++) {
+      above = above * 10 + min_digit;
+    }
+  } else {
+    vector<int> v = vector<int>();
+    above = afill(a, av, v, digits);
+  }
+  fprintf(stderr, "above: %lld\n", above);
+
+  vector<int> v1 = vector<int>();
+  long below = belowfill(a, av, v1, digits);
+  if (below > a) {
+    // go down a digit
+    below = 0;
+    for (int i = 0; i < av_digits - 1; i++) {
+      below = below * 10 + max_digit;
+    }
+  }
+  fprintf(stderr, "below: %lld\n", below);
+
+  long ans = min(abs(a-below), abs(a-above));
+  cout << ans << "\n";
 
 }
 
