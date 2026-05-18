@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -61,11 +61,77 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 
 
 
+struct Event {
+  int idx;
+  bool type;  //true=ok, false=choke
+};
+
+
+struct Index {
+  int idx;
+  int count;
+};
+
 
 void solve() {
   int n;
   cin >> n;
-  // -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
+  vector<int> a(n+1);
+  for (int i = 1; i <= n; i++)  cin >> a[i];
+  vector<int> b(n+1);
+  for (int i = 1; i <= n; i++)  cin >> b[i];
+
+  vector<vector<Event>> events(n+2);
+  for (int i = 1; i <= n; i++) {
+    if (a[i] == b[i]) {
+      events[a[i]].pb({i, true});
+    } else {
+      events[a[i]].pb({i, false});
+      events[b[i]].pb({i, false});
+    }
+  }
+  for (int i = 1; i <= n+1; i++) {
+    events[i].pb({n+1, false});
+  }
+
+  vector<Index> indices(n);
+  vector<Index> new_indices;
+  for (int i = 1; i <= n; i++)  indices[i-1] = {i, 1};
+
+  long ans = 0;
+
+  // Sweeping
+  for (int cur = 1; cur <= n+1; cur++) {
+    fprintf(stderr, "----- cur = %d\n", cur);
+    fprintf(stderr, "indices:  \n");
+    for (const auto& ind : indices)  fprintf(stderr, "[%d x%d]  ", ind.idx, ind.count);
+    fprintf(stderr, "\n\n");
+
+
+    vector<Event>& cur_events = events[cur];
+    int i = 0;  //points to first unprocessed index
+    for (int eptr = 0; eptr < cur_events.size(); eptr++) {
+      Event& event = cur_events[eptr];
+      int total_count_at_event = 0;
+      while (i < indices.size() && indices[i].idx <= event.idx) {
+        Index ind = indices[i];
+        ans += LONG(ind.count) * LONG(event.idx - ind.idx);
+        total_count_at_event += ind.count;
+        i++;
+      }
+      if (event.type) {
+        new_indices.pb({event.idx, total_count_at_event});
+      }  //if event is a choke, indices do not carry on
+    }
+    assert(i == indices.size());  //should've gotten them all
+    swap(indices, new_indices);
+    new_indices.clear();
+
+
+  }
+
+  cout << ans << "\n";
+
 
 }
 
