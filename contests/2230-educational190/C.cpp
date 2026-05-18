@@ -65,7 +65,45 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 void solve() {
   int n;
   cin >> n;
-  // -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
+  vector<long> c(n);
+  for (int i = 0; i < n; i++)  cin >> c[i];
+  long num_cards_above_2 = 0;
+  long num_cards_unique = 0;
+  long num_types_above_2 = 0;
+  for (int i = 0; i < n; i++) {
+    if (c[i] >= 2) {
+      num_cards_above_2 += c[i];
+      num_types_above_2++;
+    } else {
+      num_cards_unique += c[i];
+    }
+  }
+
+  long total_cards = num_cards_above_2 + num_cards_unique;
+  if (total_cards < 3) {
+    cout << 0 << "\n";
+    return;
+  }
+
+  if (num_cards_above_2 < 2) {
+    fprintf(stderr, "special case: all cards unique\n");
+    cout << "0\n";
+    return;
+  } else if (num_types_above_2 == 1) {
+    fprintf(stderr, "special case: only 1 chain\n");
+    long max_unique = num_cards_above_2 / 2;
+    long ans = min(max_unique, num_cards_unique) + num_cards_above_2;
+    cout << ans << "\n";
+  } else {
+    long max_unique = 0;
+    for (int i = 0; i < n; i++) {
+      if (c[i] >= 2) {
+        max_unique += (c[i]-2) / 2;
+      }
+    }
+    long ans = min(max_unique, num_cards_unique) + num_cards_above_2;
+    cout << ans << "\n";
+  }
 
 }
 
