@@ -63,9 +63,43 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 
 
 void solve() {
-  int n;
-  cin >> n;
-  // -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
+  string s1;
+  cin >> s1;
+  int num_4s_removed = 0;
+  string s;
+  for (char c : s1) {
+    if (c == '4')  num_4s_removed++;
+    else  s += c;
+  }
+  int n = s.size();
+  if (n == 0) {
+    cout << num_4s_removed << "\n";
+    return;
+  }
+
+  vector<int> prefix_count_13s(n, 0);
+  prefix_count_13s[0] = (s[0] == '1' || s[0] == '3' ? 1 : 0);
+  for (int i = 1; i < n; i++) {
+    prefix_count_13s[i] = prefix_count_13s[i - 1] + (s[i] == '1' || s[i] == '3' ? 1 : 0);
+  }
+
+  vector<int> suffix_count_2s(n, 0);
+  suffix_count_2s[n-1] = (s[n - 1] == '2' ? 1 : 0);
+  for (int i = n-2; i >= 0; i--) {
+    suffix_count_2s[i] = suffix_count_2s[i + 1] + (s[i] == '2' ? 1 : 0);
+  }
+
+  int best = INT_MAX;
+  for (int split = 0; split <= n; split++) {
+    int ans_here = 0;
+    if (split > 0)  ans_here += prefix_count_13s[split-1];
+    if (split < n)  ans_here += suffix_count_2s[split];
+    best = min(best, ans_here);
+  }
+
+  cout << best + num_4s_removed << "\n";
+
+
 
 }
 
