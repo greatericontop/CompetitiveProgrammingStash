@@ -178,7 +178,7 @@ void solve() {
       fprintf(stderr, "p0 ans = %d\n", p0_ans);
     }
     // p >= tp+d, find minimum c
-    int pmax_minc = min_c_st.range_query(query.tp + query.d, MAX-1);
+    int pmax_minc = min_c_st.range_query(min(query.tp + query.d, MAX-1), MAX-1);
     if (pmax_minc != INF) {
       int pmax_ans = (query.tp + query.d) + clamp(pmax_minc, query.tc, query.d);
       ans = min(ans, pmax_ans);
@@ -193,7 +193,7 @@ void solve() {
       fprintf(stderr, "c0 ans = %d\n", c0_ans);
     }
     // c >= tc+d, find minimum p
-    int cmax_minp = min_p_st.range_query(query.tc + query.d, MAX-1);
+    int cmax_minp = min_p_st.range_query(min(query.tc + query.d, MAX-1), MAX-1);
     if (cmax_minp != INF) {
       int cmax_ans = (query.tc + query.d) + clamp(cmax_minp, query.tp, query.d);
       ans = min(ans, cmax_ans);
@@ -202,7 +202,7 @@ void solve() {
 
     // Middle: query tp <= p <= tp+d
     // this number may overshoot but no loss of correctness
-    int middle_min_cp = min_cp_st.range_query(query.tp, query.tp + query.d);
+    int middle_min_cp = min_cp_st.range_query(query.tp, min(query.tp + query.d, MAX-1));
     ans = min(ans, middle_min_cp);
     fprintf(stderr, "middle ans = %d\n", middle_min_cp);
 
