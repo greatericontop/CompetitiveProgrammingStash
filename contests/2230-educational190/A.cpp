@@ -63,9 +63,19 @@ template <typename It, typename Container> constexpr static inline int itertoi(c
 
 
 void solve() {
-  int n;
-  cin >> n;
-  // -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1
+  long n, a, b;
+  cin >> n >> a >> b;
+
+  a = min(a, b);
+  if (b > 3*a) {
+    cout << n*a << "\n";
+  } else {
+    long nover3 = n/3;
+    long extra = n%3;
+    long option1 = nover3*b + extra*a;
+    long option2 = (nover3+1)*b;
+    cout << min(option1, option2) << "\n";
+  }
 
 }
 
