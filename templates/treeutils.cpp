@@ -1,11 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-
-
-
-
 using AdjList = vector<vector<int>>;
+
+
+
+
+
+
+/* Make sure you initialize parents[root] = root or -1 or some non-vertex number! */
 void create_directed_adj(int v, AdjList& adj_undirected, vector<int>& parents, AdjList& adj) {
   for (int child : adj_undirected[v]) {
     if (child == parents[v])  continue;
