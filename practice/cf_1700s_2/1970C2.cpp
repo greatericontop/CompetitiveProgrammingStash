@@ -102,7 +102,7 @@ void solve() {
   cin >> root;
   root--;
   AdjList adj(n);
-  vector<int> parents(n);
+  vector<int> parents(n, -1); //PREVIOUS SOLUTION THAT DIDNT DO THIS IS ACTUALLY WRONG
   create_directed_adj(root, adj_u, parents, adj);
 
   vector<bool> dp(n);

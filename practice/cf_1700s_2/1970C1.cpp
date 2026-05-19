@@ -95,7 +95,7 @@ void solve() {
   root--;
 
   AdjList adj(n);
-  vector<int> parents(n);
+  vector<int> parents(n, -1);
   create_directed_adj(root, adj_u, parents, adj);
 
   for (int child : adj[root]) {
