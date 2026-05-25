@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -54,6 +54,25 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 //template <typename It, typename Container> constexpr static inline int itertoi(const It& it, const Container& container) { return distance(container.begin(), it); }
 
 
+constexpr static long MOD = 998244353LL;
+
+/* O(log exp) */
+int64_t mod_exp(int64_t base, int64_t exp) {
+  int64_t result = 1;
+  while (exp > 0) {
+    if (exp & 1)  result = (result * base) % MOD;
+    base = (base * base) % MOD;
+    exp >>= 1;
+  }
+  return result;
+}
+
+/* Only works for primes, O(log MOD) */
+int64_t modular_inverse(int64_t a) {
+  return mod_exp(a, MOD - 2);
+}
+
+
 
 
 
@@ -84,16 +103,17 @@ void solve() {
     b_ptr[ b_state[i].second ] = i;
   }
 
-  long product = 0;
+  long product = 1;
   for (int i = 0; i < n; i++) {
-    product += a_state[i].first * b_state[i].first; //fix this, also need modular division
-    product %= 998244353LL;
+    product *= min(a_state[i].first, b_state[i].first);
+    product %= MOD;
   }
   cout << product << " ";
 
   while (q --> 0) {
     int o, i;
     cin >> o >> i;
+    i--;
     if (o == 1) {
       // increment a[i] by 1
       long cur_ai = a_state[a_ptr[i]].first;
@@ -106,9 +126,11 @@ void solve() {
       swap(a_state[a_ptr[i]], a_state[j_state]);
       swap(a_ptr[i], a_ptr[j]);
       // now increment new position i
+      product *= modular_inverse(min(a_state[a_ptr[i]].first, b_state[a_ptr[i]].first));
+      product %= MOD;
       a_state[a_ptr[i]].first++;
-      product += b_state[a_ptr[i]].first;
-      product %= 998244353LL;
+      product *= min(a_state[a_ptr[i]].first, b_state[a_ptr[i]].first);
+      product %= MOD;
     } else {
       // increment b[i] by 1
       long cur_bi = b_state[b_ptr[i]].first;
@@ -121,10 +143,21 @@ void solve() {
       swap(b_state[b_ptr[i]], b_state[j_state]);
       swap(b_ptr[i], b_ptr[j]);
       // now increment new position i
+      product *= modular_inverse(min(a_state[b_ptr[i]].first, b_state[b_ptr[i]].first));
+      product %= MOD;
       b_state[b_ptr[i]].first++;
-      product += a_state[b_ptr[i]].first;
-      product %= 998244353LL;
+      product *= min(a_state[b_ptr[i]].first, b_state[b_ptr[i]].first);
+      product %= MOD;
     }
+    fprintf(stderr, "after query, sorted lists look like:\n");
+    for (int k = 0; k < n; k++) {
+      fprintf(stderr, "%lld ", a_state[k].first);
+    }
+    fprintf(stderr, "\n");
+    for (int k = 0; k < n; k++) {
+      fprintf(stderr, "%lld ", b_state[k].first);
+    }
+    fprintf(stderr, "\n");
     cout << product << " ";
   }
   cout << "\n";
