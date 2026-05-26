@@ -89,6 +89,11 @@ void solve() {
 
   // Check validity of small_indices
   int m = small_indices.size();
+  if (m == 0) {
+    // all first k-1 are the same number
+    cout << "YES\n";
+    return;
+  }
   int i0 = (m-1)/2, j0 = (m)/2;
   int i = i0, j = j0;
   fprintf(stderr, "m: %d, i: %d, j: %d\n", m, i, j);
