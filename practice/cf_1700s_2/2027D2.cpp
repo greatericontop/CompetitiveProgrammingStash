@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -92,9 +92,11 @@ void solve() {
 
 
   vector<vector<pairll>> dp(n+2, vector<pairll>(m+1, {INF, 0LL}));
+  vector<vector<long>> dp_suffix_sum(n+3, vector<long>(m+1, 0LL));
   for (int k = 1; k <= m; k++) {
     // 0 cost, 1 way
     dp[n+1][k] = {0LL, 1LL};
+    dp_suffix_sum[n+1][k] = 1LL;
   }
   for (int i = n; i >= 1; i--) {
     for (int k = m; k >= 1; k--) {
@@ -111,14 +113,37 @@ void solve() {
           r = j-1;
         }
       }
-      // TODO: second binary search here, accumulate all dps
-      // 4min elapsed so far
       int j = l;
       if (j > i) {
-        pairll new_state = {dp[j][k].first + (m-k), dp[j][k].second};
-        update(dp[i][k], new_state);
-      }  //if j==i, then potentially impossible (still INF)
+        // find p, pointing to the leftmost that still has the same .first; the .first is monotonic
+        int l2 = i+1, r2 = j;
+        while (l2 < r2) {
+          int p = l2 + (r2-l2)/2;
+          if (dp[p][k].first == dp[j][k].first) {
+            r2 = p;
+          } else {
+            l2 = p+1;
+          }
+        }
+        int p = l2;
 
+        // [p...j]
+//#ifdef GREATERIC_DEBUG
+//        for (int x = p; x < j; x++) {
+//          assert(dp[x][k].first == dp[j][k].first);
+//        }
+//        long acc = 0;
+//        for (int x = p; x <= j; x++) {
+//          acc += dp[x][k].second;
+//        }
+//        assert(acc % MOD == (dp_suffix_sum[p][k] - dp_suffix_sum[j+1][k]) % MOD);
+//#endif
+        long new_ways = (dp_suffix_sum[p][k] - dp_suffix_sum[j+1][k] + MOD) % MOD;
+        pairll new_state = {dp[j][k].first + (m-k), new_ways};
+        update(dp[i][k], new_state);
+      }
+
+      dp_suffix_sum[i][k] = (dp[i][k].second + dp_suffix_sum[i+1][k]) % MOD;
     }
   }
 
