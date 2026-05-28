@@ -17,9 +17,19 @@ main:
     mov rdx, 1753428593230423
 
 loopstart:
+    // Reduce the effect of pipelining by unrolling loop
+    add rax, rdx
+    add rax, rdx
+    add rax, rdx
+    add rax, rdx
+    add rax, rdx
+    add rax, rdx
+    add rax, rdx
+    add rax, rdx
+    add rax, rdx
     add rax, rdx
     inc ecx
-    cmp ecx, 1000000000
+    cmp ecx, 100000000
     jl loopstart
 
 
