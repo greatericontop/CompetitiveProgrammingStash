@@ -66,6 +66,24 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 void solve() {
   int n;
   cin >> n;
+  vector<long> a(n);
+  FORI(n)  cin >> a[i];
+  sort(a.begin(), a.end());
+
+  int best = INT_MAX;
+
+  for (int i = 0; i < n; i++) {
+    // find low and top end of a[i]
+    auto it1 = lower_bound(a.begin(), a.end(), a[i]);
+    auto it2 = prev(upper_bound(a.begin(), a.end(), a[i]));
+    int low_size = distance(a.begin(), it1);
+    int top_size = distance(it2, a.end()) - 1;
+    int score = max(low_size, top_size);
+    best = min(best, score);
+  }
+
+  cout << best << "\n";
+
 
 }
 
