@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -107,6 +107,10 @@ void solve() {
       continue;
     }
     int l = l_it->second, r = prev(r_it)->second;
+    if (l > r) {
+      cout << l_orig << " " << l_orig << "\n";
+      continue;
+    }
     fprintf(stderr, "converting query [%d %d] to [%d %d]\n", l_orig, r_orig, l, r);
 
     int best_score = INT_MAX;
