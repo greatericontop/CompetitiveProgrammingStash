@@ -66,6 +66,19 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 void solve() {
   int n;
   cin >> n;
+  vector<long> a(n+1);
+  FORI1(n)  cin >> a[i];
+
+  long best_possible_height = LONG(1e12);
+  long prefix_sum = 0;
+  for (int i = 1; i <= n; i++) {
+    prefix_sum += a[i];
+    long best_height_here = prefix_sum / i;
+    best_possible_height = min(best_possible_height, best_height_here);
+
+    cout << best_possible_height << " ";
+  }
+  cout << "\n";
 
 }
 
