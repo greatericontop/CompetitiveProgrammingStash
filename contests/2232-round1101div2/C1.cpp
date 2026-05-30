@@ -64,8 +64,52 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 
 
 void solve() {
-  int n;
-  cin >> n;
+  int n, x, s;
+  cin >> n >> x >> s;
+  string str;
+  cin >> str;
+
+  int a_count = 0;
+  for (char c : str) {
+    if (c == 'A')  a_count++;
+  }
+  int best = 0;
+
+  // turn first a_intro A's into I's
+  for (int a_intro = 0; a_intro <= a_count; a_intro++) {
+    string str1 = str;
+    int _a = a_intro;
+    for (int i = 0; i < n; i++) {
+      if (str1[i] == 'A') {
+        if (_a > 0) {
+          str1[i] = 'I';
+          _a--;
+        } else {
+          str1[i] = 'E';
+        }
+      }
+    }
+
+    // run simulation
+    int tables = 0;
+    int total_seats = 0;
+    for (char c : str1) {
+      if (c == 'I') {
+        if (tables < x) {
+          tables++;
+          total_seats++;
+        }
+      } else {
+        if (total_seats < tables * s) {
+          total_seats++;
+        }
+      }
+    }
+
+    best = max(best, total_seats);
+  }
+
+  cout << best << "\n";
 
 }
 
