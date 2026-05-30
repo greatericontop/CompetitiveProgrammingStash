@@ -62,10 +62,63 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 
 
 
+struct Operation {
+  int which_disk;
+  int from;
+  int to;
+};
+
+/*
+ * Kentq orz recursive spec: solves n disks from :from: to :to: using :extra:
+ *   in 2^(n-1) - 1 moves or less.
+ *   Base case: n = 1 in 1 move (trivial)
+ */
+void solve_recursively(int n, const vector<int>& h, int from, int to, int extra, vector<Operation>& ops) {
+  if (n == 0) {
+    return;
+  }
+  if (n == 1) {
+    ops.push_back({1, from, to});
+    return;
+  }
+
+  int m = h[n];
+  if (m == n - 1) {
+    solve_recursively(n-1, h, from, extra, to, ops);
+    ops.push_back({n, from, to});
+    solve_recursively(n-1, h, extra, to, from, ops);
+  } else {
+    solve_recursively(m, h, from, extra, to, ops);
+    ops.push_back({n, from, to});
+    solve_recursively(m, h, extra, from, to, ops);
+    solve_recursively(n-1, h, from, to, extra, ops);
+  }
+}
+
 
 void solve() {
   int n;
   cin >> n;
+  vector<int> a(n+1);
+  FORI1(n)  cin >> a[i];
+  vector<int> h(n+1);
+  for (int i = 1; i <= n; i++) {
+    h[i] = (i-1) - a[i];
+    if (h[i] < 0) {
+      cout << "NO\n";
+      return;
+    }
+  }
+
+  // If heights are valid, then the answer is yes
+  vector<Operation> ops;
+  solve_recursively(n, h, 1, 3, 2, ops);
+  assert(ops.size() <= (1 << n));
+  cout << "YES\n";
+  cout << ops.size() << "\n";
+  for (const auto& op : ops) {
+    cout << op.which_disk << " " << op.from << " " << op.to << "\n";
+  }
 
 }
 
