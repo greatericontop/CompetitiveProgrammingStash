@@ -66,6 +66,28 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 void solve() {
   int n;
   cin >> n;
+  vector<int> a(n);
+  FORI(n)  cin >> a[i];
+
+  for (int first = 0; first < n; first++) {
+    vector<int> b(a);
+    swap(b[0], b[first]);
+    sort(b.begin()+1, b.end(), greater<int>());
+    bool works = true;
+    for (int i = 2; i < n; i++) {
+      if (b[i] != b[i-2] % b[i-1]) {
+        works = false;
+        break;
+      }
+    }
+    if (works) {
+      cout << b[0] << " " << b[1] << "\n";
+      return;
+    }
+  }
+
+  cout << "-1\n";
+
 
 }
 
