@@ -63,10 +63,18 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 
 
 
-void solve() {
-  int n;
-  cin >> n;
+long MOD12[12] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 22, 11};
 
+void solve() {
+  long n;
+  cin >> n;
+  long a = MOD12[n % 12];  //lowest possible a that could work
+  long b = n - a;
+  if (b >= 0) {
+    cout << a << " " << b << "\n";
+  } else {
+    cout << -1 << "\n";
+  }
 }
 
 

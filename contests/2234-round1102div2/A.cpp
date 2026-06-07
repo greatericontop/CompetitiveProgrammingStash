@@ -74,6 +74,9 @@ void solve() {
     swap(b[0], b[first]);
     sort(b.begin()+1, b.end(), greater<int>());
     bool works = true;
+    if (b[0] < b[1]) {
+      continue;
+    }
     for (int i = 2; i < n; i++) {
       if (b[i] != b[i-2] % b[i-1]) {
         works = false;
