@@ -137,7 +137,10 @@ void solve() {
         }
       }
       for (int neighbor : erase_queue) {
-        adj[prime_factor].erase(neighbor);
+        // fahhh im stupid
+        for (int pf2 : prime_factors[neighbor]) {
+          adj[pf2].erase(neighbor);
+        }
       }
     }
   }
