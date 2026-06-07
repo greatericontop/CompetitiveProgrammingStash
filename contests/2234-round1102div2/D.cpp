@@ -64,8 +64,42 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 
 
 void solve() {
-  int n;
-  cin >> n;
+  int n, k;
+  cin >> n >> k;
+  string x, y;
+  cin >> x >> y;
+  string x_xor_y(n, '.');
+  FORI(n)  x_xor_y[i] = (x[i] == y[i]) ? '0' : '1';
+  long x0 = 0, x1 = 0, y0 = 0, y1 = 0, xor0 = 0, xor1 = 0;
+  FORI(n) {
+    if (x[i] == '0')  x0++;
+    else  x1++;
+    if (y[i] == '0')  y0++;
+    else  y1++;
+    if (x_xor_y[i] == '0')  xor0++;
+    else  xor1++;
+  }
+  long score_x = x0*x1, score_y = y0*y1, score_xor = xor0*xor1;
+
+
+  /*
+   * Kentq rec spec:
+   *
+   *   dp_xy[k] = score of 0...2^k (INCLUSIVE) if 0 is x and 2^k is y
+   *
+   *   dp[0] would be 2 elts
+   */
+  vector<long> dp_xy(k+1, -1);
+  // x y
+  dp_xy[0] = score_x + score_y;
+  dp_xy[1] = score_x + score_y + score_xor;
+  for (int i = 2; i <= k; i++) {
+    // i turns into 2x i-2 and 1x i-1, minus y and x on the boundaries
+    dp_xy[i] = 2*dp_xy[i-2] + dp_xy[i-1] - score_x - score_y;
+  }
+
+  cout << dp_xy[k] << "\n";
+
 
 }
 
