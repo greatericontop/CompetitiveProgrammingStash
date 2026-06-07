@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -66,6 +66,37 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 void solve() {
   int n;
   cin >> n;
+  vector<int> h(n);
+  FORI(n)  cin >> h[i];
+
+  for (int empty_i = 0; empty_i < n; empty_i++) {
+    vector<int> limitsright(n);
+    limitsright[empty_i] = 0;
+    for (int i = 0; i < n-1; i++) {
+      int j = (empty_i + i) % n;
+      int k = (j + 1) % n;
+      // j -> k  (use h[j])
+      limitsright[k] = max(limitsright[j], h[j]);
+    }
+
+    vector<int> limitsleft(n);
+    limitsleft[empty_i] = 0;
+    for (int i = 0; i < n-1; i++) {
+      int j = (empty_i - i + 2*n) % n;
+      int k = (j - 1 + n) % n;
+      // hk here
+      limitsleft[k] = max(limitsleft[j], h[k]);
+    }
+
+    PRINTVEC(limitsright);
+    PRINTVEC(limitsleft);
+    long sum = 0;
+    for (int i = 0; i < n; i++) {
+      sum += LONG(min(limitsright[i], limitsleft[i]));
+    }
+    cout << sum << " ";
+  }
+  cout << "\n";
 
 }
 
