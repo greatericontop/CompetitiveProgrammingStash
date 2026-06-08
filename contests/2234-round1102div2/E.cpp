@@ -85,7 +85,7 @@ long solve_rec(int l, int r, const vector<long>& a) {
     int j = l + d;
     long expected_if_min;
     if (j >= l && j <= r) {
-      expected_if_min = (r - j + 1) * (j - l + 1);
+      expected_if_min = LONG(r - j + 1) * LONG(j - l + 1);
       if (a[j] == expected_if_min) {
         min_i = j;
         break;
@@ -96,7 +96,7 @@ long solve_rec(int l, int r, const vector<long>& a) {
     }
     j = r - d;
     if (j >= l && j <= r) {
-      expected_if_min = (r - j + 1) * (j - l + 1);
+      expected_if_min = LONG(r - j + 1) * LONG(j - l + 1);
       if (a[j] == expected_if_min) {
         min_i = j;
         break;
