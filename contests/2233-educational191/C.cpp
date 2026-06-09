@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -62,10 +62,78 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 
 
 
+int calc_rbs(const string& s) {
+  // greedy
+  int chars_used = 0;
+  int balance = 0;
+  for (char c : s) {
+    if (c == '(') {
+      chars_used++;
+      balance++;
+    } else {
+      if (balance > 0) {
+        chars_used++;
+        balance--;
+      }
+    }
+  }
+  return chars_used - balance;  //if extra ( leftover
+}
+
 
 void solve() {
-  int n;
-  cin >> n;
+  int n, k;
+  cin >> n >> k;
+  string s;
+  cin >> s;
+  int leftct = 0, rightct = 0;
+  for (char c : s) {
+    if (c == '(')  leftct++;
+    else  rightct++;
+  }
+
+  int best_rbs = INT_MAX;
+  string best_keystring;
+  for (int front = 0; front <= k; front++) {
+    int back = k - front;
+    if (front > leftct || back > rightct)  continue;  //const factor optimization
+    int front_temp = front;
+    // delete front, back
+    string keystring(n, '0');
+    for (int i = 0; i < n; i++) {
+      if (s[i] == '(') {
+        if (front_temp > 0) {
+          keystring[i] = '1';
+          front_temp--;
+        } else {
+          break;
+        }
+      }
+    }
+    for (int i = n-1; i >= 0; i--) {
+      if (s[i] == ')') {
+        if (back > 0) {
+          keystring[i] = '1';
+          back--;
+        } else {
+          break;
+        }
+      }
+    }
+    string s_new;
+    for (int i = 0; i < n; i++) {
+      if (keystring[i] == '0')  s_new += s[i];
+    }
+    fprintf(stderr, "front %d, back %d, s_new %s\n", k-front, front, s_new.c_str());
+    int rbs = calc_rbs(s_new);
+    if (rbs < best_rbs) {
+      best_rbs = rbs;
+      best_keystring = keystring;
+    }
+  }
+
+  cout << best_keystring << "\n";
+
 
 }
 
