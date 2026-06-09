@@ -121,10 +121,12 @@ void solve() {
   vector<long> subtree_sizes(n+1);
   get_subtree_sizes(1, adj, subtree_sizes);
   vector<long> total_distances(n+1);
+  PRINTVECL(subtree_sizes);
   total_distances[1] = 0;
-  for (int i = 2; i <= n; i++) {
+  for (int i = 1; i <= n; i++) {
     total_distances[1] += subtree_sizes[i];
   }
+  total_distances[1]--;  //double ended, but do not include self
   fill_in_total_dist(1, n, adj, subtree_sizes, total_distances);
   long total_extras = 0;
   for (int i = 1; i <= n; i++) {
@@ -141,8 +143,9 @@ void solve() {
     fprintf(stderr, "total extra distances %lld\n", total_extras);
     long total_combinations = LONG(n) * LONG(n-1) / 2;
     fprintf(stderr, "divide by %lld\n", total_combinations);
-    long numerator = total_combinations + total_extras;
-    long ans = (numerator * modular_inverse(total_combinations)) % MOD;
+    total_extras %= MOD;
+    total_combinations %= MOD;
+    long ans = (total_extras * modular_inverse(total_combinations)) % MOD;
     cout << ans << "\n";
   }
 }
