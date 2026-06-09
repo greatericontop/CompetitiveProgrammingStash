@@ -67,6 +67,22 @@ void solve() {
   int n;
   cin >> n;
 
+  while (n >= 4) {
+    int x = n-1, y = n;
+
+    printf("%d %d %d %d %d %d %d %d ", y, x, x, y, x, y, y, x);
+
+    n -= 2;
+  }
+
+  // n == 3 or n == 2
+  if (n == 2) {
+    printf("2 1 1 2 1 2 2 1\n");
+  } else {
+    printf("1 1 2 1 2 3 1 3 2 2 3 3\n");
+  }
+
+
 }
 
 
