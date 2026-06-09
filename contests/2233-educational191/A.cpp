@@ -64,8 +64,26 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 
 
 void solve() {
-  int n;
-  cin >> n;
+  long n, x, y, z;
+  cin >> n >> x >> y >> z;
+
+  long ans = LLONG_MAX;
+
+
+  // no ai
+  long speed = x + y;
+  ans = min(ans, ceildivl(n, speed));
+
+  // yes ai
+  long n2 = n - x*z;  //xz lines in z time
+  if (n2 > 0) {  //otherwise just do no ai
+    long remaining_speed = x + 10LL*y;
+    long remaining_time = ceildivl(n2, remaining_speed);
+    ans = min(ans, z + remaining_time);
+  }
+
+  cout << ans << "\n";
+
 
 }
 
