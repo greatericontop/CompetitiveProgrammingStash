@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -63,9 +63,132 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 
 
 
+bool checker(int n, int m, vector<int>& a) {
+  fprintf(stderr, "try:  "); PRINTVEC(a);
+  vector<int> last_seen(m, -1);
+  for (int i = 0; i < n; i++) {
+    int x = a[i];
+    if (last_seen[x] != -1) {
+      if (last_seen[x] != i - 1) {
+        return false;
+      }
+    }
+    last_seen[x] = i;
+  }
+  return true;
+}
+
+
 void solve() {
   int n;
   cin >> n;
+  vector<int> a_old(n);
+  FORI(n)  cin >> a_old[i];
+  // coord compress
+  map<int, int> ids;
+  vector<int> a(n);
+  for (int i = 0; i < n; i++) {
+    if (!ids.count(a_old[i]))  ids[a_old[i]] = INT(ids.size());
+    a[i] = ids[a_old[i]];
+  }
+  int m = INT(ids.size());
+  PRINTVEC(a);
+
+  if (checker(n, m, a)) {
+    cout << "YES\n";
+    return;
+  }
+
+  vector<set<int>> b(m);
+  for (int i = 0; i < n; i++) {
+    b[a[i]].insert(i);
+  }
+
+  for (int x = 0; x < m; x++) {
+    fprintf(stderr, "x = %d\n", x);
+    assert(!b[x].empty());
+    int range = (*b[x].rbegin()) - (*b[x].begin()) + 1;
+    int sz = INT(b[x].size());
+    assert(range >= sz);
+    if (range > sz) {
+      assert(b[x].size() >= 2);
+      // This one is invalid and needs to be fixed
+      int min_i = *b[x].begin();
+      int max_i = *b[x].rbegin();
+
+      // Cross
+      if (max_i < n-1) {
+        swap(a[min_i], a[max_i+1]);
+        if (checker(n, m, a)) {
+          cout << "YES\n";
+          return;
+        }
+        swap(a[min_i], a[max_i+1]);
+      }
+      if (min_i > 0) {
+        swap(a[max_i], a[min_i-1]);
+        if (checker(n, m, a)) {
+          cout << "YES\n";
+          return;
+        }
+        swap(a[max_i], a[min_i-1]);
+      }
+
+      // Wiggle
+      int second_min_i = *next(b[x].begin());
+      if (second_min_i != min_i + 1) {
+        swap(a[min_i], a[second_min_i-1]);
+        if (checker(n, m, a)) {
+          cout << "YES\n";
+          return;
+        }
+        swap(a[min_i], a[second_min_i-1]);
+      }
+      int second_max_i = *prev(b[x].end(), 2);
+      if (second_max_i != max_i - 1) {
+        swap(a[max_i], a[second_max_i+1]);
+        if (checker(n, m, a)) {
+          cout << "YES\n";
+          return;
+        }
+        swap(a[max_i], a[second_max_i+1]);
+      }
+
+      // Insert into the hole
+      set<int> without_min = b[x];
+      without_min.erase(*without_min.begin());
+      for (int j = second_min_i; j <= max_i; j++) {
+        if (!without_min.count(j)) {
+          swap(a[min_i], a[j]);
+          if (checker(n, m, a)) {
+            cout << "YES\n";
+            return;
+          }
+          swap(a[min_i], a[j]);
+          break;
+        }
+      }
+      set<int> without_max = b[x];
+      without_max.erase(*without_max.rbegin());
+      for (int j = second_max_i; j >= min_i; j--) {
+        if (!without_max.count(j)) {
+          swap(a[max_i], a[j]);
+          if (checker(n, m, a)) {
+            cout << "YES\n";
+            return;
+          }
+          swap(a[max_i], a[j]);
+          break;
+        }
+      }
+
+      break;
+    }
+  }
+
+
+  cout << "NO\n";
+
 
 }
 
