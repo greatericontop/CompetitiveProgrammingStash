@@ -110,6 +110,7 @@ void solve() {
 
   vector<int> cycle_cover;
   for (const pairii& x : by_indegree)  cycle_cover.pb(x.second);
+  for (int v : cycle_cover)  assert(indegree[v] == 1);
   PRINTVEC(cycle_cover);
 
   vector<int> distances(n+1, -1);
@@ -118,15 +119,18 @@ void solve() {
 
     int dist = 0;
     int cur = start;
-
     while (true) {
       distances[cur] = dist;
       dist++;
       cur = adj[cur];
       if (cur == start) {
+        assert(distances[cur] == 0);
         break;
       }
     }
+
+    PRINTVEC(distances);
+    assert(dist > 0 && dist <= n);
 
     if (dist == k) {
       cout << "YES\n";
