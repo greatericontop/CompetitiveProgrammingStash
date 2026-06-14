@@ -69,20 +69,8 @@ void solve() {
   string s;
   cin >> s;
 
-  vector<long> dp(n+1);
-  dp[n] = 0;
-  dp[n-1] = (s[n-1] == '1' ? 1 : 0);
-  if (n >= 2) {
-    if (s[n-2] == '1') {
-      dp[n-2] = 2;
-    } else if (s[n-1] == '1') {
-      dp[n-2] = 1;
-    } else {
-      dp[n-2] = 0;
-    }
-  }
-
-  for (int i = n-3; i >= 0; i--) {
+  vector<long> dp(n+3, 0);
+  for (int i = n-1; i >= 0; i--) {
     if (s[i] == '0') {
       dp[i] = dp[i+1];
     } else {
@@ -90,11 +78,7 @@ void solve() {
     }
   }
 
-  PRINTVECL(dp);
-
-  long sum = 0;
-  for (long x : dp)  sum += x;
-  cout << sum << "\n";
+  cout << accumulate(dp.begin(), dp.end(), 0LL) << "\n";
 
 }
 
