@@ -1,0 +1,2 @@
+#include<bits/stdc++.h>
+using namespace std;using L=int64_t;int main(){L t;cin>>t;while(t--){L n;string s;cin>>n>>s;vector<L>d(n+9);for(L i=n;i;i--)d[i]=s[i-1]=='0'?d[i+1]:(n-i+1)+d[i+3];cout<<accumulate(d.begin(),d.end(),0LL)<<"\n";}}
