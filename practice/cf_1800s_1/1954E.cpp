@@ -91,10 +91,10 @@ void solve() {
   PRINTVEC(component_counts);
 
   for (int k = 1; k <= maxa; k++) {
-    int time = 0;
+    long time = 0;
     int delta = 0;
     while (delta < maxa) {
-      time += component_counts[delta];
+      time += LONG(component_counts[delta]);
       delta += k;
     }
     cout << time << " ";
