@@ -80,6 +80,7 @@ void solve() {
   cin >> n;
   vector<int> a(n+1);
   FORI1(n)  cin >> a[i];
+  sort(a.begin()+1, a.end());
 
   vector<State> dp(5001, {0, 0, 0});
   for (int i = n; i >= 1; i--) {
@@ -90,15 +91,14 @@ void solve() {
     dp_new[a[i]].number %= MOD; dp_new[a[i]].sum %= MOD; dp_new[a[i]].odd_ct %= MOD;
 
     for (int j = 0; j <= 5000; j++) {
+      // dp[j] -> add a[i] to it -> dp_new[new_j]
       // new skew is reduced by a[i]
       int new_j = max(0, j - a[i]);
 
       dp_new[new_j].number += dp[j].number;
       dp_new[new_j].number %= MOD;
 
-      dp_new[new_j].sum += dp[j].sum;
-      dp_new[new_j].sum %= MOD;
-      dp_new[new_j].sum += dp[j].number * a[i];
+      dp_new[new_j].sum += dp[j].sum + dp[j].number*a[i];
       dp_new[new_j].sum %= MOD;
 
       if (a[i] % 2 == 0) {
