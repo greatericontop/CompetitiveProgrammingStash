@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -83,17 +83,24 @@ void solve() {
   // naive simulation is sufficient to pass
   // O(unique log unique), but sum of unique is bounded to like 1 million
   while (true) {
+    PRINTVEC(cur);
+    fprintf(stderr, "true zero %d, pending zero %d\n", true_zero_count, pending_zero_count);
     if (cur.empty()) {
       cout << 0 << "\n";
       return;
     }
     if (cur.size() == 1) {
+      if (true_zero_count == 0 && pending_zero_count > 0) {
+        // meaning we have multiple of a single element
+        cout << 0 << "\n";
+        return;
+      }
       cout << cur[0] << "\n";
       return;
     }
 
     set<int> seen;
-    int new_true_zero_count = true_zero_count + pending_zero_count - 1;
+    int new_true_zero_count = max(true_zero_count-1, 0) + pending_zero_count;
     pending_zero_count = 0;
     if (true_zero_count > 0) { // NOT pending
       seen.insert(cur[0]);
