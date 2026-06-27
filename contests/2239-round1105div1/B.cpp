@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -64,8 +64,34 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 
 
 void solve() {
-  int n;
-  cin >> n;
+  int n, d;
+  cin >> n >> d;
+  vector<long> a(3*n+1);
+  for (int i = 1; i <= n; i++) {
+    cin >> a[i];
+    a[i+n] = a[i];
+    a[i+2*n] = a[i];
+  }
+  vector<long> prefix_sum(3*n+1, 0);
+  for (int i = 1; i <= 3*n; i++) {
+    prefix_sum[i] = prefix_sum[i-1] + a[i];
+  }
+
+  vector<long> value_of_gift(n+1, 0);
+  for (int i = 1; i <= n; i++) {
+    // value = (2d+1) a[i] - (range sum a[i-d] to a[i+d])
+    long ai_contrib = LONG(2*d + 1) * a[i];
+    long sub = prefix_sum[i+n+d] - prefix_sum[i+n-d-1];
+    value_of_gift[i] = ai_contrib - sub;
+  }
+  PRINTVECL(value_of_gift);
+
+  long ans = 0;
+  for (int i = 1; i <= n; i++) {
+    if (value_of_gift[i] >= 0)  ans += value_of_gift[i];
+  }
+
+  cout << ans << "\n";
 
 }
 
