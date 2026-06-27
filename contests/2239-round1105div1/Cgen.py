@@ -44,3 +44,23 @@ def gen_mid_rng():
             print('p', perm[i])
         else:
             print('s', prefix_invs)
+
+
+def gen_semilarge_rng():
+    print(1)
+    n = 6000
+    print(n)
+    perm = list(range(1, n+1))
+    shuffle(perm)
+
+    prefix_invs = 0
+    for i in range(n):
+        for j in range(i):
+            if perm[j] > perm[i]:
+                prefix_invs += 1
+        if randint(1, 2) == 1:
+            print('p', perm[i])
+        else:
+            print('s', prefix_invs)
+
+
