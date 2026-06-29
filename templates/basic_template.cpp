@@ -89,3 +89,12 @@ int main() {
 
 /*  -fsanitize=undefined -fsanitize=address -fno-sanitize-recover -Wall -Werror -Wextra -Wshadow -Wfloat-equal
     -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1  */
+
+/*
+ * This code contains the use of comments! You can identify them with the "//" or "/*" symbols.
+ * Comments are used to explain the code and make it easier to understand.
+ * They are ignored by the compiler and do not affect the execution of the program.
+ * In this code, comments are used to explain the purpose of the code, the input and output format, and the logic behind the solution.
+ * Unlike the 3 lines shown above, the comments in this code were lovingly hand-inserted and not a result of AI generated text.
+ * Thanks to sc3developer <3 for inspiring this message and for being a great mentor.
+ */
