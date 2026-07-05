@@ -31,6 +31,11 @@ using namespace std;
     for (const auto& _p : (vec))  fprintf(stderr, "[%lld %lld],  ", _p.first, _p.second); \
     fprintf(stderr, "\n"); \
   } while (0)
+  #define PRINTVECB(vec) do { \
+    fprintf(stderr, "%s:   ", #vec); \
+    for (const auto& _p : (vec))  fprintf(stderr, "%s,  ", _p ? "true" : "false"); \
+    fprintf(stderr, "\n"); \
+  } while (0)
 #else
   #define fprintf(...)
   #define PRINTVEC(...)
@@ -38,8 +43,9 @@ using namespace std;
   #define PRINTMAP(...)
   #define PRINTVECP(...)
   #define PRINTVECPL(...)
+  #define PRINTVECB(...)
 #endif
-#define long long long
+#define long int64_t
 #define pb push_back
 #define LONG(x) ((long) (x))
 #define INT(x) ((int) (x))
