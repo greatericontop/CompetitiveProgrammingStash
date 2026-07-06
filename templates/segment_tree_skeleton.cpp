@@ -18,16 +18,16 @@ template <class T, class Combiner> class SegmentTree {
 private:
   int max_layer;
   int n;
-  vector<vector<T>> segments; // segments[l] contains 0 to 2^l - 1
+  vector<vector<T>> segments;  //segments[l] contains 0 to 2^l - 1
   Combiner combiner;
-  T combine_empty; // the identity/null element (e.g. 0 for sum, INT_MAX for min, etc.)
+  T combine_empty;  //the identity/null element (e.g. 0 for sum, INT_MAX for min, etc.)
 
 public:
-  explicit SegmentTree(int max_layer, Combiner combiner, T combine_empty, const vector<T>&& initialize)
+  explicit SegmentTree(int max_layer, Combiner combiner, T combine_empty, const vector<T>& initialize)
       : max_layer(max_layer), n(exp(max_layer)), segments(max_layer + 1),
       combiner(combiner), combine_empty(combine_empty) {
     assert(initialize.size() <= n);
-    segments[0] = initialize;
+    segments[0] = initialize;  //this is a copy
     while (segments[0].size() < n)  segments[0].push_back(combine_empty);
 
     for (int layer = 1; layer <= max_layer; layer++) {
@@ -52,7 +52,7 @@ public:
       // Find biggest interval (aka what's the biggest power of 2 that divides a)
       int layer_i = left;
       int layer = 0;
-      while ((left % (2 << layer) == 0) && (layer < 18) && (left + (2 << layer) - 1 <= right)) {
+      while ((left % (2 << layer) == 0) && (layer < max_layer) && (left + (2 << layer) - 1 <= right)) {
         layer++;
         layer_i /= 2;
       }
