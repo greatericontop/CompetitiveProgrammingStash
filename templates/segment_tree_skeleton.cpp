@@ -47,19 +47,26 @@ public:
 
   /* Range query left to right inclusive, 0-indexed */
   T range_query(int left, int right) {
-    T answer = combine_empty;
-    while (left <= right) {
-      // Find biggest interval (aka what's the biggest power of 2 that divides a)
-      int layer_i = left;
-      int layer = 0;
-      while ((left % (2 << layer) == 0) && (layer < max_layer) && (left + (2 << layer) - 1 <= right)) {
-        layer++;
-        layer_i /= 2;
+    T answer_left = combine_empty;
+    T answer_right = combine_empty;
+    for (int layer = 0; layer <= max_layer; layer++) {
+      if (left == right) {
+        return combiner(combiner(answer_left, segments[layer][left]), answer_right);
+      } else if (left == right + 1) {
+        return combiner(answer_left, answer_right);
       }
-      answer = combiner(answer, segments[layer][layer_i]);
-      left += exp(layer);
+      if (left % 2 == 1) {
+        answer_left = combiner(answer_left, segments[layer][left]);
+        left++;
+      }
+      if (right % 2 == 0) {
+        answer_right = combiner(segments[layer][right], answer_right);
+        right--;
+      }
+      left /= 2;
+      right /= 2;
     }
-    return answer;
+    assert(false);
   }
 };
 
