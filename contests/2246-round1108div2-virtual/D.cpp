@@ -72,6 +72,52 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 void solve() {
   int n;
   cin >> n;
+  vector<int> a_orig(n);
+  FORI(n)  cin >> a_orig[i];
+
+  int logn = 0;
+  while ((1 << logn) < n+2)  logn++;
+  assert(logn <= 20);
+
+  long best = LONG(1e18);
+  for (int e = 0; e <= logn; e++) {
+    int twotoe = (1 << e);  //also the cost multiplier
+    long roundup_cost = 0;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+      int ai_new = ((a_orig[i] + twotoe - 1) / twotoe) * twotoe;
+      assert(ai_new - a_orig[i] >= 0 && ai_new - a_orig[i] < twotoe);
+      assert(ai_new % twotoe == 0);
+      if (e == 0)  assert(ai_new == a_orig[i]);
+      a[i] = ai_new / twotoe;
+      roundup_cost += LONG(ai_new - a_orig[i]);
+    }
+    fprintf(stderr, "for 2^%d, ", e); //PRINTVEC(a);
+
+    long turn_costs = 0;
+    for (int i = 0; i < n; i++) {
+      // try rounding up to each bit position.
+      long mincosthere = LONG(1e18);
+      for (int b = 0; b <= logn; b++) {
+        int twotob = (1 << b);
+        int ai_new = ((a[i] + twotob - 1) / twotob) * twotob;
+        long costhere = LONG(ai_new - a[i]) * LONG(twotoe);  //cost to increment, plus 2^e multiplier
+        // then number of turns is
+        int index_of_highest_set_bit = 31 - __builtin_clz((uint32_t)ai_new);  //zerobased since we also count popcount
+        int popcount = __builtin_popcount((uint32_t)ai_new);
+        mincosthere = min(mincosthere, costhere + index_of_highest_set_bit + popcount);
+      }
+      assert(mincosthere != LONG(1e18));
+      turn_costs += mincosthere;
+    }
+
+    long total_turns_here = turn_costs + roundup_cost + e;
+    fprintf(stderr, "for 2^%d, turn_costs = %ld, roundup_cost = %ld (total = %ld)\n", e, turn_costs, roundup_cost, total_turns_here);
+    best = min(best, total_turns_here);
+  }
+
+  assert(best != LONG(1e18));
+  cout << best << "\n";
 
 }
 
