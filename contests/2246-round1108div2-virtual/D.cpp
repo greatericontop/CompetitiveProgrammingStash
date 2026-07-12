@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -75,12 +75,12 @@ void solve() {
   vector<int> a_orig(n);
   FORI(n)  cin >> a_orig[i];
 
-  int logn = 0;
-  while ((1 << logn) < n+2)  logn++;
-  assert(logn <= 20);
+//  int logn = 0;
+//  while ((1 << logn) < n+2)  logn++;
+//  assert(logn <= 20);
 
   long best = LONG(1e18);
-  for (int e = 0; e <= logn; e++) {
+  for (int e = 0; e <= 20; e++) {
     int twotoe = (1 << e);  //also the cost multiplier
     long roundup_cost = 0;
     vector<int> a(n);
@@ -98,7 +98,7 @@ void solve() {
     for (int i = 0; i < n; i++) {
       // try rounding up to each bit position.
       long mincosthere = LONG(1e18);
-      for (int b = 0; b <= logn; b++) {
+      for (int b = 0; b <= 20; b++) {
         int twotob = (1 << b);
         int ai_new = ((a[i] + twotob - 1) / twotob) * twotob;
         long costhere = LONG(ai_new - a[i]) * LONG(twotoe);  //cost to increment, plus 2^e multiplier
