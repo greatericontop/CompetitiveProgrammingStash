@@ -72,6 +72,24 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 void solve() {
   int n;
   cin >> n;
+  if (n == 1) {
+    cout << "1\n";
+    return;
+  }
+  if (n == 2) {
+    cout << "-1\n";
+    return;
+  }
+  if (n >= 3) {
+    cout << "2 4 6 ";
+    long x = 12;
+    for (int i = 4; i <= n; i++) {
+      assert(x <= LONG(1e17));
+      cout << x << " ";
+      x *= 2;
+    }
+    cout << "\n";
+  }
 
 }
 
