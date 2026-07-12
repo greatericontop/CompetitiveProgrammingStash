@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -57,11 +57,28 @@ using AdjList = vector<vector<int>>;
 // Positive numbers only
 constexpr static inline int ceildiv(int a, int b) { return (a + b - 1) / b; }
 constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; }
-//constexpr static long MOD = 1'000'000'007LL;
+constexpr static long MOD = 1'000'000'007LL;
 //constexpr static long MOD =   998'244'353LL;
 
 
 
+
+
+/* O(log exp) */
+int64_t mod_exp(int64_t base, int64_t exp) {
+  int64_t result = 1;
+  while (exp > 0) {
+    if (exp & 1)  result = (result * base) % MOD;
+    base = (base * base) % MOD;
+    exp >>= 1;
+  }
+  return result;
+}
+
+/* Only works for primes, O(log MOD) */
+int64_t modular_inverse(int64_t a) {
+  return mod_exp(a, MOD - 2);
+}
 
 
 
@@ -72,6 +89,61 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 void solve() {
   int n;
   cin >> n;
+  vector<int> a(n);
+  FORI(n)  cin >> a[i];
+  int istart = 0;
+  while (istart < n && a[istart] == -1)  istart++;  //istart is the number of -1s, and the index of the first real elt
+
+  long waiting_no1 = 1;  //empty sequence
+  long waiting_yes1 = 0;
+  map<int, long> one_no1;
+  map<int, long> one_yes1;
+
+  for (int i = istart; i < n; i++) {
+    long delta_waiting_no1 = 0, delta_waiting_yes1 = 0;
+    // one_yes1 ---> waiting_yes1,  by taking the same value
+    delta_waiting_yes1 += one_yes1[a[i]];
+    // one_no1 ---> waiting_no1,  by taking the same value
+    delta_waiting_no1 += one_no1[a[i]];
+    // one_no1 ---> waiting_yes1,  by taking value+1 (which is -1 from cur)
+    delta_waiting_yes1 += one_no1[a[i] - 1];
+
+    // waiting_no1 ---> one_no1
+    one_no1[a[i]] += waiting_no1;
+    one_no1[a[i]] %= MOD;
+    // waiting_yes1 ---> one_yes1
+    one_yes1[a[i]] += waiting_yes1;
+    one_yes1[a[i]] %= MOD;
+
+    waiting_no1 += delta_waiting_no1;
+    waiting_yes1 += delta_waiting_yes1;
+    waiting_no1 %= MOD;  waiting_yes1 %= MOD;
+  }
+
+  long ans1 = waiting_yes1;
+  fprintf(stderr, "first ans: %lld\n", ans1);
+  // number of ways to pick odd 1s = (istart choose 1) + (istart choose 3) + ...
+  long multi = istart == 0 ? 0 : mod_exp(2, istart - 1);
+  ans1 *= multi;
+  ans1 %= MOD;
+
+
+
+
+  // accumulating pairs
+  long ans2 = 1;
+  map<int, long> inprogress;
+  for (int i = 0; i < n; i++) {
+    long ans2_delta = inprogress[a[i]];
+    inprogress[a[i]] += ans2;
+    inprogress[a[i]] %= MOD;
+    ans2 += ans2_delta;
+    ans2 %= MOD;
+  }
+  fprintf(stderr, "second ans: %lld\n", ans2);
+
+  cout << (ans1 + ans2) % MOD << "\n";
+
 
 }
 
