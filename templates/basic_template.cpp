@@ -57,6 +57,9 @@ using AdjList = vector<vector<int>>;
 // Positive numbers only
 constexpr static inline int ceildiv(int a, int b) { return (a + b - 1) / b; }
 constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; }
+// Round :a: down or up to the closest multiple of :b:
+constexpr static inline int rounddown(int a, int b) { return (a / b) * b; }
+constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 //constexpr static long MOD = 1'000'000'007LL;
 //constexpr static long MOD =   998'244'353LL;
 
