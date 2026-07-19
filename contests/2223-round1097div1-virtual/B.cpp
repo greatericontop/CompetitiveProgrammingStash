@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -61,7 +61,31 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 constexpr static inline int rounddown(int a, int b) { return (a / b) * b; }
 constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 //constexpr static long MOD = 1'000'000'007LL;
-//constexpr static long MOD =   998'244'353LL;
+constexpr static long MOD =   998'244'353LL;
+/* O(log exp) */
+int64_t mod_exp(int64_t base, int64_t exp) {
+  int64_t result = 1;
+  while (exp > 0) {
+    if (exp & 1)  result = (result * base) % MOD;
+    base = (base * base) % MOD;
+    exp >>= 1;
+  }
+  return result;
+}
+
+/* Only works for primes, O(log MOD) */
+int64_t modular_inverse(int64_t a) {
+  return mod_exp(a, MOD - 2);
+}
+
+struct Fraction {
+  int top;
+  int bottom;
+
+  bool operator < (const Fraction& other) const {
+    return LONG(top) * other.bottom < LONG(other.top) * bottom;
+  }
+};
 
 
 
@@ -75,6 +99,40 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 void solve() {
   int n;
   cin >> n;
+  vector<int> a(n);
+  FORI(n)  cin >> a[i];
+  vector<int> b(n);
+  FORI(n)  cin >> b[i];
+
+
+  vector<Fraction> fracs(LONG(n)*LONG(n-1));
+  int k = 0;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      if (i == j)  continue;
+      fracs[k++] = Fraction{b[i], b[j]};
+    }
+  }
+  sort(fracs.begin(), fracs.end());
+
+
+  long total = 0;
+  for (int i = 0; i < n; i++) {
+    for (int j = i+1; j < n; j++) {
+      // Calculate EV number of inversions between i and j
+
+      // inversion occurs for all ratios > a_j / a_i
+      auto it = upper_bound(fracs.begin(), fracs.end(), Fraction{a[j], a[i]});
+      long ct = fracs.end() - it;
+      fprintf(stderr, "invs between %d and %d: %ld\n", a[i], a[j], ct);
+      long ev = ct * modular_inverse((LONG(n) * LONG(n-1)) % MOD);
+
+      total += ev;
+      total %= MOD;
+    }
+  }
+
+  cout << total << "\n";
 
 }
 
