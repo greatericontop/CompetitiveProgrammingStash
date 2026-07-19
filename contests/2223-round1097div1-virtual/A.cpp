@@ -75,6 +75,43 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 void solve() {
   int n;
   cin >> n;
+  string a, b;
+  cin >> a >> b;
+
+  int a_balance = 0;
+  int b_balance = 0;
+  for (int i = 0; i < n; i++) {
+    if (a[i] == b[i]) {
+      // same, can't do anything
+      if (a[i] == '(') {
+        a_balance++;
+        b_balance++;
+      } else {
+        a_balance--;
+        b_balance--;
+      }
+    } else {
+      // '(' and ')'
+      if (a_balance < b_balance) {
+        a_balance++;
+        b_balance--;
+      } else {
+        a_balance--;
+        b_balance++;
+      }
+    }
+
+    if (a_balance < 0 || b_balance < 0) {
+      cout << "NO\n";
+      return;
+    }
+  }
+
+  if (a_balance != 0 || b_balance != 0) {
+    cout << "NO\n";
+    return;
+  }
+  cout << "YES\n";
 
 }
 
