@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -162,9 +162,12 @@ void solve() {
     fprintf(stderr, "max loss from existing: %ld (k=%ld)\n", max_loss, k);
     if (max_loss < 0) {
       total_sum += this_seg_size;
-      assert(fen.range_sum(s.fenwick_idx, s.fenwick_idx) == 0);  //this slot should be empty
-      fen.add(s.fenwick_idx, this_seg_size);
-      fen_count.add(s.fenwick_idx, 1);
+      if (s.l == s.r) {
+        // only discard size 1 segs
+        assert(fen.range_sum(s.fenwick_idx, s.fenwick_idx) == 0);  //this slot should be empty
+        fen.add(s.fenwick_idx, this_seg_size);
+        fen_count.add(s.fenwick_idx, 1);
+      }
       continue;
     } else {
       // can remove up to max_loss while remaining >= k-this_seg_size (and then we will add ourselves at the end)
@@ -188,9 +191,12 @@ void solve() {
     }
 
     total_sum += this_seg_size;
-    assert(fen.range_sum(s.fenwick_idx, s.fenwick_idx) == 0);  //this slot should be empty
-    fen.add(s.fenwick_idx, this_seg_size);
-    fen_count.add(s.fenwick_idx, 1);
+    if (s.l == s.r) {
+      // only discard size 1 segs
+      assert(fen.range_sum(s.fenwick_idx, s.fenwick_idx) == 0);  //this slot should be empty
+      fen.add(s.fenwick_idx, this_seg_size);
+      fen_count.add(s.fenwick_idx, 1);
+    }
   }
 
   if (best_cost == INF)  best_cost = -1;
