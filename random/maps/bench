@@ -1,0 +1,5 @@
+#! /bin/bash
+
+time "$1" < gen.in > /dev/null
+time "$1" < gen.in > /dev/null
+time "$1" < gen.in > /dev/null
