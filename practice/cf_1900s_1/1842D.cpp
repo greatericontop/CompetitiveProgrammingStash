@@ -122,6 +122,7 @@ void solve() {
     if (distances[i] <= distances[n])  dists_list.pb(distances[i]);
   }
   sort(dists_list.begin(), dists_list.end());
+  dists_list.erase(unique(dists_list.begin(), dists_list.end()), dists_list.end());
   assert(dists_list.front() == 0);
   assert(dists_list.back() == distances[n]);
 
