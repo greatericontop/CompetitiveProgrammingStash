@@ -111,6 +111,10 @@ void solve() {
     cout << "inf\n";
     return;
   }
+  if (distances[n] == 0) {
+    cout << "0 0\n";
+    return;
+  }
 
   vector<long> dists_list;  dists_list.reserve(n);
   for (int i = 1; i <= n; i++) {
