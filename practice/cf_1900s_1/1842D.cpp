@@ -114,9 +114,12 @@ void solve() {
 
   vector<long> dists_list;  dists_list.reserve(n);
   for (int i = 1; i <= n; i++) {
-    if (distances[i] != INF)  dists_list.pb(distances[i]);
+    // do not extend past
+    if (distances[i] <= distances[n])  dists_list.pb(distances[i]);
   }
   sort(dists_list.begin(), dists_list.end());
+  assert(dists_list.front() == 0);
+  assert(dists_list.back() == distances[n]);
 
   vector<string> answers_s;
   vector<long> answers_sz;
@@ -128,6 +131,7 @@ void solve() {
       if (distances[v] < dists_list[i+1])  s[v-1] = '1';
       else  s[v-1] = '0';
     }
+    assert(s[0] == '1' && s[n-1] == '0');
     answers_s.pb(s);
     answers_sz.pb(sz_here);
   }
