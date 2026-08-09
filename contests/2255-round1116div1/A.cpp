@@ -73,8 +73,30 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 void solve() {
-  int n;
-  cin >> n;
+  int n, k;
+  cin >> n >> k;
+  string s_before;
+  cin >> s_before;
+  string s_after = s_before;
+  for (int i = 0; i < 2*n; i++) {
+    // move i to i+1, only if i+1 is empty
+    int iplus1 = (i + 1) % (2*n);
+    if (s_before[i] == '1' && s_before[iplus1] == '0') {
+      s_after[i] = '0';
+      s_after[iplus1] = '1';
+    }
+  }
+
+  int even_ct = 0;
+  int odd_ct = 0;
+  for (int i = 0; i < 2*n; i++) {
+    if (s_after[i] == '1') {
+      if (i % 2 == 0)  even_ct++;
+      else  odd_ct++;
+    }
+  }
+
+  cout << odd_ct << " " << even_ct << "\n";
 
 }
 
