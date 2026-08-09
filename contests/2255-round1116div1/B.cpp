@@ -61,8 +61,35 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 constexpr static inline int rounddown(int a, int b) { return (a / b) * b; }
 constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 //constexpr static long MOD = 1'000'000'007LL;
-//constexpr static long MOD =   998'244'353LL;
+constexpr static long MOD =   998'244'353LL;
 
+
+/* O(log exp) */
+int64_t mod_exp(int64_t base, int64_t exp) {
+  int64_t result = 1;
+  while (exp > 0) {
+    if (exp & 1)  result = (result * base) % MOD;
+    base = (base * base) % MOD;
+    exp >>= 1;
+  }
+  return result;
+}
+
+/* Only works for primes, O(log MOD) */
+int64_t modular_inverse(int64_t a) {
+  return mod_exp(a, MOD - 2);
+}
+/* n may be reduced % MOD, but not k, O(k) */
+int64_t choose_mod(int64_t n, int64_t k) {
+  if (k > n)  return 0;
+  int64_t top = 1; // n * ... * (n - k + 1)
+  int64_t bottom = 1; // k!
+  for (int64_t i = 1; i <= k; i++) {
+    top = (top * ((n - i + 1) % MOD)) % MOD;
+    bottom = (bottom * i) % MOD;
+  }
+  return (top * modular_inverse(bottom)) % MOD;
+}
 
 
 
@@ -75,6 +102,28 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 void solve() {
   int n;
   cin >> n;
+  string s;
+  cin >> s;
+
+  int one_blocks = 0, zero_blocks = 0;
+  for (int i = 0; i < n; i++) {
+    if (i == 0 || s[i] != s[i-1]) {
+      if (s[i] == '1')  one_blocks++;
+      else  zero_blocks++;
+    }
+  }
+  int one_chars = 0, zero_chars = 0;
+  for (char c : s) {
+    if (c == '1')  one_chars++;
+    else  zero_chars++;
+  }
+
+  // distribute one_chars into one_blocks
+  // (one_chars-1) choose (one_blocks-1)
+  long ones = choose_mod(one_chars - 1, one_blocks - 1);
+  long zeros = choose_mod(zero_chars - 1, zero_blocks - 1);
+  long ans = (ones * zeros) % MOD;
+  cout << ans << "\n";
 
 }
 
