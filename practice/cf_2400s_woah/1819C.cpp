@@ -147,6 +147,39 @@ bool traverse_backward(int cur, AdjList& adj, vector<int>& subtree_size, vector<
 }
 
 
+bool traverse_root(int root, AdjList& adj, vector<int>& subtree_size, vector<int>& cur_path) {
+  if (adj[root].empty()) {
+    cur_path.pb(root);
+    return true;
+  }
+  vector<int> trivial_children;
+  vector<int> nontrivial_children;
+  for (int child : adj[root]) {
+    if (subtree_size[child] == 1) {
+      trivial_children.pb(child);
+    } else {
+      nontrivial_children.pb(child);
+    }
+  }
+
+  if (nontrivial_children.size() > 2)  return false;
+  if (nontrivial_children.size() == 2) {
+    cur_path.pb(root);
+    bool ret = traverse_backward(nontrivial_children[0], adj, subtree_size, cur_path);
+    if (!ret)  return false;
+    for (int child : trivial_children) {
+      cur_path.pb(child);
+    }
+    ret = traverse_forward(nontrivial_children[1], adj, subtree_size, cur_path);
+    if (!ret)  return false;
+    return true;
+  } else {
+    // just let helper function do it
+    return traverse_forward(root, adj, subtree_size, cur_path);
+  }
+}
+
+
 
 
 
@@ -171,7 +204,7 @@ void solve() {
   subtree_size_dp(1, adj, subtree_size);
 
   vector<int> path;
-  bool ret = traverse_forward(1, adj, subtree_size, path);
+  bool ret = traverse_root(1, adj, subtree_size, path);
   if (!ret) {
     cout << "No\n";
   } else {
