@@ -196,15 +196,25 @@ void solve() {
     adj_undirected[u].pb(v);
     adj_undirected[v].pb(u);
   }
+
+  if (n == 2) {
+    cout << "Yes\n1 2\n";
+    return;
+  }
+
   vector<int> _parents(n+1, -1);
   AdjList adj(n+1);
-  create_directed_adj(1, adj_undirected, _parents, adj);
+  int root = 1;
+  while (adj_undirected[root].size() == 1) {
+    root++;
+  }  //bandaid fix for my recursive spec is to root at a degree >= 2
+  create_directed_adj(root, adj_undirected, _parents, adj);
 
   vector<int> subtree_size(n+1, 0);
-  subtree_size_dp(1, adj, subtree_size);
+  subtree_size_dp(root, adj, subtree_size);
 
   vector<int> path;
-  bool ret = traverse_root(1, adj, subtree_size, path);
+  bool ret = traverse_root(root, adj, subtree_size, path);
   if (!ret) {
     cout << "No\n";
   } else {

@@ -75,6 +75,26 @@ void create_directed_adj(int v, AdjList& adj_undirected, vector<int>& parents, A
 }
 
 
+bool is_valid_path(int n, const vector<int>& path, const vector<vector<bool>>& adjmat) {
+  for (int i = 0; i < n; i++) {
+    int u = path[i], v = path[(i+1) % n];
+    // u and v are adjacent
+    if (adjmat[u][v])  continue;
+    // or exists some x that is adjacent to both
+    bool ok = false;
+    for (int x = 1; x <= n; x++) {
+      if (adjmat[u][x] && adjmat[v][x]) {
+        ok = true;
+        break;
+      }
+    }
+    if (!ok)  return false;
+  }
+
+  return true;
+}
+
+
 int main() {
   ifstream cin1("gen.in");
   int n;
@@ -100,27 +120,27 @@ int main() {
   ifstream cin2("1.out");
   string s; cin2 >> s;
   if (s == "No") {
+    // generate all permutations of 1...n
+    vector<int> perm(n);
+    FORI(n)  perm[i] = i+1;
+    do {
+      if (is_valid_path(n, perm, adjmat)) {
+        fprintf(stderr, "Found valid path: ");
+        for (int v : perm)  fprintf(stderr, "%d ", v);
+        fprintf(stderr, "\n");
+        return 100;  //wa
+      }
+    } while (next_permutation(perm.begin(), perm.end()));
     return 0;
   } else {
     vector<int> path(n);
     FORI(n)  cin2 >> path[i];
 
-    for (int i = 0; i < n; i++) {
-      int u = path[i], v = path[(i+1) % n];
-      // u and v are adjacent
-      if (adjmat[u][v])  continue;
-      // or exists some x that is adjacent to both
-      bool ok = false;
-      for (int x = 1; x <= n; x++) {
-        if (adjmat[u][x] && adjmat[v][x]) {
-          ok = true;
-          break;
-        }
-      }
-      if (!ok)  return 1;
+    if (is_valid_path(n, path, adjmat)) {
+      return 0;
+    } else {
+      return 100;  //wa
     }
-
-    return 0;
   }
 }
 
