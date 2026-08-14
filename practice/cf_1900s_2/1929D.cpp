@@ -133,21 +133,19 @@ void dp_weakly_good(int v, AdjList& adj, const vector<long>& strongly_good, vect
     ct1 += weakly_good[child];
     ct1 %= MOD;
   }
-  // 2 different nonempty strongly good subtrees
-  long total_strongly_good_children = 0;
+  // >=2 different nonempty strongly good subtrees
+  // all, including empty, and 1 nonempty
+  long total_strongly_good = 1;
+  long sum2 = 0;
   for (int child : adj[v]) {
-    total_strongly_good_children += strongly_good[child];
-    total_strongly_good_children %= MOD;
+    total_strongly_good *= (strongly_good[child]+1);
+    total_strongly_good %= MOD;
+    sum2 += strongly_good[child];
+    sum2 %= MOD;
   }
-  long ct2 = 0;
-  for (int child : adj[v]) {
-    long other_children = (total_strongly_good_children - strongly_good[child] + MOD) % MOD;
-    ct2 += (strongly_good[child] * other_children) % MOD;
-    ct2 %= MOD;
-  }
-  ct2 = (ct2 * modular_inverse(2)) % MOD;
+  total_strongly_good = (total_strongly_good - 1 - sum2 + 2*MOD) % MOD;  //subtract empty and 1 nonempty
 
-  weakly_good[v] = (selectroot + ct1 + ct2) % MOD;
+  weakly_good[v] = (selectroot + ct1 + total_strongly_good) % MOD;
 }
 
 
@@ -177,7 +175,7 @@ void solve() {
   dp_strongly_good(1, adj, strongly_good);
   vector<long> weakly_good(n+1, -1);
   dp_weakly_good(1, adj, strongly_good, weakly_good);
-  cout << (weakly_good[1]+1) << "\n";  //finally, completely empty
+  cout << ((weakly_good[1]+1)%MOD) << "\n";  //finally, completely empty
 }
 
 
