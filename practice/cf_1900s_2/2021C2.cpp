@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
