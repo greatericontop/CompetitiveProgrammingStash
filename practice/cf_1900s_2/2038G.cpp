@@ -92,6 +92,10 @@ void solve() {
     cout << "0 1 1" << endl;
   }
 
+  int resp;
+  cin >> resp;
+  if (resp == -1)  exit(5);
+
 }
 
 
