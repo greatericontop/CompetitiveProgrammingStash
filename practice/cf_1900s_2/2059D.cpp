@@ -94,7 +94,7 @@ void solve() {
     adj2[v].pb(u);
   }
 
-  vector<vector<EdgeEntry>> adj_big(X*n + 10);
+  vector<vector<EdgeEntry>> adj_big(X*n + X + 100);
   for (int a = 1; a <= n; a++) {
     for (int b = 1; b <= n; b++) {
       int node = a*X + b;
@@ -108,8 +108,8 @@ void solve() {
   }
 
   priority_queue<pairll, vector<pairll>, greater<pairll>> pq;
-  vector<long> dist(X*n + 10, INF);
-  vector<bool> visited(X*n + 10, false);
+  vector<long> dist(X*n + X + 100, INF);
+  vector<bool> visited(X*n + X + 100, false);
   dist[s1*X + s2] = 0;
   pq.push({0, s1*X + s2});
   while (!pq.empty()) {
