@@ -18,6 +18,19 @@ void create_directed_adj(int v, AdjList& adj_undirected, vector<int>& parents, A
 }
 
 
+//int n;
+//cin >> n;
+//AdjList adj_undirected(n+1);
+//FORI(n-1) {
+//int u, v;  cin >> u >> v;
+//adj_undirected[u].pb(v);
+//adj_undirected[v].pb(u);
+//}
+//vector<int> parents(n+1, -1);
+//AdjList adj(n+1);
+//create_directed_adj(1, adj_undirected, parents, adj);
+
+
 /* tour[v].first corresponds to v, tour[v].second corresponds to the last endpoint of the segment, inclusive. */
 using EulerTour = vector<pair<int, int>>;
 
