@@ -89,6 +89,9 @@ void cull(vector<Node>& trie, int cur, vector<int>& answers, int answer) {
 
 
 void solve() {
+  ifstream cin("gen.in");
+  ifstream cin2("1.out");
+  int testcases;  cin >> testcases;  assert(testcases == 1);
   int n, q;
   cin >> n >> q;
   vector<int> w(n);
@@ -96,46 +99,25 @@ void solve() {
   vector<int> queries(q);
   FORI(q)  cin >> queries[i];
 
-  vector<Node> trie;  trie.reserve(30*n + 1000);
-  trie.pb(node_empty());
   for (int i = 0; i < q; i++) {
-    int cur = 0;
-    for (int b = 29; b >= 0; b--) {
-      int bit = (queries[i] >> b) & 1;
-      if (trie[cur].next[bit] == -1) {
-        trie[cur].next[bit] = INT(trie.size());
-        trie.pb(node_empty());
+    int given_ans;  cin2 >> given_ans;
+
+    int x = queries[i];
+    int ct = 0;
+    for (int j = n-1; j >= 0; j--) {
+      if (x >= w[j]) {
+        x ^= w[j];
+        ct++;
+      } else {
+        break;
       }
-      cur = trie[cur].next[bit];
     }
-    trie[cur].ids.pb(i);
-  }
-
-  int accumulated_xor = 0;
-  vector<int> answers(q, n);
-  for (int i = n-1; i >= 0; i--) {
-    int cur = 0;
-    for (int b = 29; b >= 0; b--) {
-      int bit = (w[i] >> b) & 1;
-      int xor_accumulated = (accumulated_xor >> b) & 1;
-      if (bit == 1) {
-        // then we need to cull the 0 branch
-        if (trie[cur].next[xor_accumulated] != -1) {
-          cull(trie, trie[cur].next[xor_accumulated], answers, n-1-i);
-          trie[cur].next[xor_accumulated] = -1;  //so we don't double cull
-        }
-      }
-      cur = trie[cur].next[bit ^ xor_accumulated];  //then we'll go down that branch where there could be more divisions
-      if (cur == -1)  break;
+    if (ct != given_ans) {
+      cout << "Test case " << i + 1 << " failed: expected " << given_ans << ", got " << ct << endl;
+      exit(5);
     }
-
-    accumulated_xor ^= w[i];
   }
 
-  for (int i = 0; i < q; i++) {
-    cout << answers[i] << " ";
-  }
-  cout << "\n";
 
 
 }
@@ -153,7 +135,7 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
   int t = 1;
-  cin >> t;
+  //cin >> t;
   while (t--)  solve();
   return 0;
 }
