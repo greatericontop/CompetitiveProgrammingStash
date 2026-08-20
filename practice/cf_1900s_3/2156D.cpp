@@ -84,7 +84,7 @@ void solve() {
   for (int b = 0; b < 20; b++) {
     PRINTVEC(valid_nums);
     PRINTVEC(active);
-    if (active.size() <= 1)  break;
+    if (valid_nums.size() <= 1)  break;
     vector<int> zeros, ones;
     for (int i : active) {
       cout << "? " << i << " " << (1<<b) << endl;
