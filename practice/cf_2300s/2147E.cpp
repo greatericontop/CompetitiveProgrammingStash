@@ -71,10 +71,10 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 /* Force setting bits 0 through msbpos (msbpos+1 total bits) */
 long costof(int n, const vector<int>& a, int msbpos) {
   long c = 0;
-  vector<int> b(n);
+  vector<int> b = a;
 
   for (int bit = msbpos; bit >= 0; bit--) {
-    FORI(n)  b[i] = a[i] & (exp(bit + 1) - 1);
+    FORI(n)  b[i] = b[i] & (exp(bit + 1) - 1);
 
     bool set = false;  int maxi = -1, maxi_i = -1;
     FORI(n) {
@@ -95,6 +95,7 @@ long costof(int n, const vector<int>& a, int msbpos) {
     }
   }
 
+  assert(c >= 0);
   return c;
 }
 
@@ -111,13 +112,16 @@ void solve() {
   FORI(n)  a_or |= a[i];
 
   vector<long> popcnt_to_cost(32, LONG(1e18));
+  for (int i = 0; i <= __builtin_popcount(a_or); i++) {
+    popcnt_to_cost[i] = 0;  //already free
+  }
   for (int msbpos = 30; msbpos >= 0; msbpos--) {
     // extra bits above msbpos
     int popcount_extra = __builtin_popcount(a_or >> (msbpos+1));
     int popcount = popcount_extra + (msbpos + 1);
     popcnt_to_cost[popcount] = min(popcnt_to_cost[popcount], costof(n, a, msbpos));
   }
-  PRINTVEC(popcnt_to_cost);
+  PRINTVECL(popcnt_to_cost);
 
   while (q --> 0) {
     int k;  cin >> k;
