@@ -95,7 +95,7 @@ void solve() {
     best = min(best, tc);
 
     // for next
-    if (s[i] == '0') {
+    if (s[i+p-1] == '0') {
       modular_zero_count[(i+p-1) % k]--;
     }
   }
