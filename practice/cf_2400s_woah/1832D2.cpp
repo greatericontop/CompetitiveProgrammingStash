@@ -106,8 +106,7 @@ void solve() {
     } else {  //odd
       if (n == 1) {
         assert(k % 2 == 0);
-        a[0] -= k/2;
-        cout << a[0] << " ";
+        cout << (a[0] - k/2) << " ";
       } else {
         long possible_minimum = min(modded_prefix_min[n-2] + k, a[n-1]);
         long penalty_terms = (k - (n-1)) / 2;
