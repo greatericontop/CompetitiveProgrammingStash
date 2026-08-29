@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -62,45 +62,42 @@ constexpr static inline int rounddown(int a, int b) { return (a / b) * b; }
 constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 constexpr static long MOD = 1'000'000'007LL;
 //constexpr static long MOD =   998'244'353LL;
-
-
-
-
-
-
-
-
-long solve_rec(int n, vector<int>& a, int i) {
-  if (i > n) {
-    // check routine
-    vector<long> b(n+1, 0);
-    for (int j = 1; j <= n; j++) {
-      if (a[j] > n)  return 0;
-      b[a[j]] += j;
-    }
-    bool equal = true;
-    for (int j = 0; j <= n; j++) {
-      if (b[j] != a[j]) {
-        equal = false;
-        break;
-      }
-    }
-    if (a[n] == 0)  equal = false;
-    if (equal) {
-      //PRINTVEC(a);
-    }
-    return equal ? 1 : 0;
+/* O(log exp) */
+int64_t mod_exp(int64_t base, int64_t exp) {
+  int64_t result = 1;
+  while (exp > 0) {
+    if (exp & 1)  result = (result * base) % MOD;
+    base = (base * base) % MOD;
+    exp >>= 1;
   }
-  if (a[i] != -1)  return solve_rec(n, a, i+1);
-
-  long ans = 0;
-  for (int x = 0; x <= (i == 0 ? 100 : n); x++) {
-    a[i] = x;
-    ans += solve_rec(n, a, i+1);
-  }
-  a[i] = -1;
-  return ans;
+  return result;
 }
+
+/* Only works for primes, O(log MOD) */
+int64_t modular_inverse(int64_t a) {
+  return mod_exp(a, MOD - 2);
+}
+
+
+
+
+
+
+
+// a zero, and k more elts
+long solve_k(long k, const vector<long>& dp) {
+  // k choose 0 dp[k] + k choose 1 dp[k-1] + ...
+  long tot = 0;
+  long choose = 1;
+  for (int i = 0; i <= k; i++) {
+    tot = (tot + choose * dp[k-i]) % MOD;
+
+    choose = (choose * (k-i)) % MOD;
+    choose = (choose * modular_inverse(i+1)) % MOD;
+  }
+  return tot;
+}
+
 
 
 
@@ -110,7 +107,46 @@ void solve() {
   vector<int> a(n+1);
   FORI(n+1)  cin >> a[i];
 
-  cout << solve_rec(n, a, 0) << "\n";
+  for (int i = 0; i <= n; i++) {
+    if (a[i] != -1) {
+      if (a[i] > n) {
+        cout << 0 << "\n";
+        return;
+      }
+      if (a[a[i]] == -1 || a[a[i]] == i) {
+        a[a[i]] = i;
+      } else {
+        cout << 0 << "\n";
+        return;
+      }
+    }
+  }
+  int ct_free = 0;  //NOT INCLUDING ZERO.
+  for (int i = 1; i <= n; i++) {
+    if (a[i] == -1)  ct_free++;
+  }
+  fprintf(stderr, "ct_free = %d\n", ct_free);
+
+  vector<long> dp(n+4, 0);
+  dp[0] = 1;
+  dp[1] = 1;
+  for (int i = 2; i <= n; i++) {
+    dp[i] = (dp[i-1] + LONG(i-1) * dp[i-2]) % MOD;
+  }
+
+  if (a[n] == -1) {
+    // a[n] is free
+    long minus1 = ct_free-1 < 0 ? 0 : solve_k(ct_free-1, dp);
+    long minus2 = ct_free-2 < 0 ? 0 : solve_k(ct_free-2, dp);
+    long ans = (minus1 + LONG(ct_free-1)*minus2) % MOD;
+    cout << ans << "\n";
+  } else {
+    // solve normally
+    long ans = solve_k(ct_free, dp);
+    cout << ans << "\n";
+  }
+
+
 }
 
 
