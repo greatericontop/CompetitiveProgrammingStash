@@ -92,6 +92,7 @@ long solve_k(long k, const vector<long>& dp) {
   for (int i = 0; i <= k; i++) {
     tot = (tot + choose * dp[k-i]) % MOD;
 
+    if (i == k)  assert(choose == 1);
     choose = (choose * (k-i)) % MOD;
     choose = (choose * modular_inverse(i+1)) % MOD;
   }
@@ -113,6 +114,7 @@ void solve() {
         cout << 0 << "\n";
         return;
       }
+      if (a[i] == 0)  continue;
       if (a[a[i]] == -1 || a[a[i]] == i) {
         a[a[i]] = i;
       } else {
@@ -136,6 +138,7 @@ void solve() {
 
   if (a[n] == -1) {
     // a[n] is free
+    assert(ct_free > 0);
     long minus1 = ct_free-1 < 0 ? 0 : solve_k(ct_free-1, dp);
     long minus2 = ct_free-2 < 0 ? 0 : solve_k(ct_free-2, dp);
     long ans = (minus1 + LONG(ct_free-1)*minus2) % MOD;

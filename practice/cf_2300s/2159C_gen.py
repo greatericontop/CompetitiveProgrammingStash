@@ -29,6 +29,14 @@ def gen_xsmall_2():
 
 def gen_small():
     print(1)
+    n = 5
+    a = [-1 if i == 0 or i == n else choice([-1, -1, -1, randint(1, n+3)]) for i in range(n+1)]
+    print(n)
+    print(' '.join(map(str, a)))
+
+
+def gen_mid():
+    print(1)
     n = 7
     a = [-1 if i == 0 or i == n else choice([-1, -1, -1, randint(1, n+5)]) for i in range(n+1)]
     print(n)
