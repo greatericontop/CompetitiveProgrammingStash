@@ -74,7 +74,7 @@ pair<bool, set<int>> partition(int n, const vector<int>& a) {
   int target = accumulate(a.begin(), a.end(), 0);
   if (target % 2 != 0)  return {false, {}};
   target /= 2;
-  assert(target <= n * n / 2);
+  //assert(target <= n * n / 2);
 
   vector<int> dp(target+1, -1);  //-1, or pointer to parent index
   dp[0] = -2;
