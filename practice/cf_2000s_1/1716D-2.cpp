@@ -65,6 +65,7 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 constexpr static long MOD =   998'244'353LL;
 
 
+#pragma GCC optimize("Ofast")
 
 
 
@@ -75,23 +76,20 @@ constexpr static long MOD =   998'244'353LL;
 
 void solve() {
   int n, k;  cin >> n >> k;
-  fprintf(stderr, "k=%d\n", k);
 
   int MAXMOVES = min(n, 640);
   vector<long> answers(n+1, 0);
   vector<long> dp_prev(n+1, 0);  dp_prev[0] = 1;
   vector<long> dp(n+1);
+  long modsum[n];  //only will use sz of it
 
   for (int m = 1; m <= MAXMOVES; m++) {
     // we make at least one move of size m, so shift dp[m-1] by sz
     int sz = k-1 + m;
-    for (int j = 0; (j < sz && j <= n); j++)  dp[j] = 0;
+    if (sz > n)  break;
+    for (int j = 0; j < sz; j++)  dp[j] = 0;
     for (int j = sz; j <= n; j++)  dp[j] = dp_prev[j-sz];
-    fprintf(stderr, "m=%d:  ", m);
-    for (int j = 0; j <= n; j++)  fprintf(stderr, "%ld ", dp[m][j]);
-    fprintf(stderr, "\n");
 
-    long modsum[sz];
     for (int j = 0; j < sz; j++)  modsum[j] = 0;
     for (int j = 0; j <= n; j++) {
       modsum[j % sz] += dp[j];
@@ -110,10 +108,6 @@ void solve() {
       answers[j] %= MOD;
     }
     swap(dp_prev, dp);
-
-    fprintf(stderr, "m=%d:  ", m);
-    for (int j = 0; j <= n; j++)  fprintf(stderr, "%ld ", dp[m][j]);
-    fprintf(stderr, "\n");
   }
 
   for (int x = 1; x <= n; x++) {
