@@ -102,10 +102,16 @@ void solve() {
   vector<long> fib_all_v;  multiset<long> fib_all_s;
   long a = 0, b = 1, fib_sum = 0;
   while (true) {
-    if (fib_sum + b > total)  break;
+    if (fib_sum + b > total) {
+      break;
+    }
     fib.insert(b);
-    fib_all_v.pb(b);  fib_all_s.insert(b);
     fib_sum += b;
+    long c = a + b;  a = b;  b = c;
+  }
+  a = 0;  b = 1;
+  while (b <= LONG(1e15)) {
+    fib_all_v.pb(b);  fib_all_s.insert(b);
     long c = a + b;  a = b;  b = c;
   }
   if (fib_sum != total) {
