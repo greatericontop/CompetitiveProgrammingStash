@@ -73,7 +73,8 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 void solve(const vector<long>& totient_prefix_sum) {
-  int n, m;  cin >> n >> m;
+  //int n, m;  cin >> n >> m;
+  int n;  long m;  cin >> n >> m;
 
   long sum_possible = 0;
   long m_left = m;
@@ -89,7 +90,7 @@ void solve(const vector<long>& totient_prefix_sum) {
 
     sum_possible += k * bundles_avail;
     if (k * bundles_avail >= m_left) {
-      // use as many as we can, leaving behind a remainder that is less than w. (will handle the remainder 1 case specially)
+      // use as many as we can, leaving behind a remainder that is less than w.
       long bundles_used = m_left / k;
       ops += bundles_used;
       m_left -= k * bundles_used;
@@ -109,13 +110,8 @@ void solve(const vector<long>& totient_prefix_sum) {
     return;
   }
 
-  if (m == sum_possible-1) {
-    assert(m_left == 1);
-    cout << -1 << "\n";
-  } else {
-    long ans = m + ops + (m_left == 0 ? 0 : 1);
-    cout << ans << "\n";
-  }
+  long ans = m + ops + (m_left == 0 ? 0 : 1);
+  cout << ans << "\n";
 }
 
 
