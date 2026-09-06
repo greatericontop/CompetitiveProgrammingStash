@@ -78,19 +78,6 @@ int64_t modular_inverse(int64_t a, int64_t MOD) {
   return mod_exp(a, MOD - 2, MOD);
 }
 
-/* n may be reduced % MOD, but not k, O(k) */
-int64_t choose_mod(int64_t n, int64_t k, int64_t MOD) {
-  if (k > n)  return 0;
-  int64_t top = 1; // n * ... * (n - k + 1)
-  int64_t bottom = 1; // k!
-  for (int64_t i = 1; i <= k; i++) {
-    top = (top * ((n - i + 1) % MOD)) % MOD;
-    bottom = (bottom * i) % MOD;
-  }
-  return (top * modular_inverse(bottom, MOD)) % MOD;
-}
-
-
 
 
 
@@ -109,30 +96,29 @@ void solve() {
     factorials[i] = (factorials[i-1] * LONG(i)) % MOD;
   }
   auto fast_choose = [&](long n, long k) -> long {
-    assert(k >= 0 && k <= n);
+    //assert(k >= 0 && k <= n);
     return (factorials[n] * modular_inverse((factorials[k] * factorials[n-k]) % MOD, MOD)) % MOD;
   };
 
+  int odd_correction = (n % 2 == 1 ? 1 : 0);
   long total = 0;
   // m: size of the final window, e.g. 3 for 5, and 3 for 6
   for (int m = 1; m <= ceildiv(n, 2); m++) {
     // k: number of points occupying it
     for (int k = 1; k <= m; k++) {
-      if (k == 1 && m != 1)  continue;  //can't pick 1 from a window of >=2
       long ways_to_choose_subset;
       if (k == 1) {
+        if (m != 1)  continue;  //can't pick 1 from a window of >=2
         ways_to_choose_subset = n;
       } else {
-        ways_to_choose_subset = n;
-        ways_to_choose_subset *= fast_choose(m-2, k-2);
+        ways_to_choose_subset = n * fast_choose(m-2, k-2);
         ways_to_choose_subset %= MOD;
       }
 
-      long ways_to_choose_a = factorials[n-k-1];
-      ways_to_choose_a *= m - (n % 2 == 1 ? 1 : 0);
+      long ways_to_choose_a = factorials[n-k-1] * LONG(m - odd_correction);
       ways_to_choose_a %= MOD;
 
-      total += (ways_to_choose_subset * ways_to_choose_a) % MOD;
+      total += (ways_to_choose_subset * ways_to_choose_a);
       total %= MOD;
       fprintf(stderr, "%d from %d, subset %ld, a %ld\n", k, m, ways_to_choose_subset, ways_to_choose_a);
     }
