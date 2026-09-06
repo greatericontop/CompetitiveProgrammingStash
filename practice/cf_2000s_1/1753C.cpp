@@ -111,7 +111,7 @@ void solve() {
   long ev = 0;
   long denom = LONG(n) * LONG(n - 1) / 2;  denom %= MOD;
   for (int move = 1; move <= invs; move++) {
-    long num = (move * move) % MOD;
+    long num = (LONG(move) * LONG(move)) % MOD;
     // 1/success probability
     long attempts = (denom * modular_inverse(num)) % MOD;
     ev = (ev + attempts) % MOD;
