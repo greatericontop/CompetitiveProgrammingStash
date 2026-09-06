@@ -83,6 +83,8 @@ void solve() {
   for (int i = 0; i < n; i++) {
     if (a[i] != maxi)  continue;
     if (i == 1 || i == n-2) {
+      if (n >= 4)  exists_great = true;  //can use the maxi again
+
       if (n == 3)  exists_superpoisoned = true;
       else  exists_poisoned.pb(i);
     } else {
