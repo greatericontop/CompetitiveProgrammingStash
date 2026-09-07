@@ -93,9 +93,11 @@ vector<double> bayes_update(const vector<double>& prior, int wins, int rounds) {
     norm += posterior[p];
   }
 
-  for (int p = 0; p <= 100; p++) {
-    posterior[p] /= norm;
-  }
+  if (norm > 0.0) {
+    for (int p = 0; p <= 100; p++) {
+      posterior[p] /= norm;
+    }
+  }  //otherwise, the likelihood this happens is literally zero, so we'll just return whatever and it doesn't matter.
   return posterior;
 }
 /* Expected win probability */
