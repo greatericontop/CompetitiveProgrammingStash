@@ -89,16 +89,20 @@ int64_t modular_inverse(int64_t a) {
 
 
 long count_ways(const vector<int>& counts, int count_blanks, long target) {
+  fprintf(stderr, "-----called on %ld target  ", target); PRINTVEC(counts);
   int log2_target = 63 - __builtin_clzll(target);
   if (!(target & (target-1))) {
     // target is a power of 2
-    int sz_total = 0, sz_below = 0;
+    //ASNFOIDSNGIOSNGIODSNGGGGINDSGOINSDGIONSDIOGNSDIOGNOIDSGNOISDGNIDOSGNIODSNFOIASJMFPOKMFOIWEMNGIOERNGOIWPOMWEFPOMWEOFINWEOIFNEWOIFNEWIOFNOIEFNFWIOEFNIOWEFNOIWEFNOIFOIEWNFOIWEFNIOEWNFIOEWNFIOWEGNIURGBNIEURBGIUEGRE
+    int sz_total = count_blanks, sz_below = count_blanks;
     for (int i = 0; i <= 60; i++) {
       sz_total += counts[i];
       if (i < log2_target)  sz_below += counts[i];
     }
     // answer = 2^sz_total - 2^sz_below
-    return (mod_exp(2, sz_total) - mod_exp(2, sz_below) + MOD) % MOD;
+    long ret = (mod_exp(2, sz_total) - mod_exp(2, sz_below) + MOD) % MOD;
+    fprintf(stderr, "-----p-ower of 2: %ld\n", ret);
+    return ret;
   }
 
   int sz_total = count_blanks, sz_equal = 0, sz_below = count_blanks;
@@ -142,6 +146,7 @@ long count_ways(const vector<int>& counts, int count_blanks, long target) {
       accumulated_ways %= MOD;
     }
   }
+  fprintf(stderr, "-----return %ld\n", (immediates + accumulated_ways) % MOD);
   return (immediates + accumulated_ways) % MOD;
 }
 
