@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -110,20 +110,39 @@ long count_ways(const vector<int>& counts, int count_blanks, long target) {
   // immediates: ones that contain any of sz_above
   long immediates = (mod_exp(2, sz_total) - mod_exp(2, sz_equal+sz_below) + MOD) % MOD;
   fprintf(stderr, "immediates = %ld\n", immediates);
-  // otherwise, take one of sz_equal and recurse
-  vector<int> counts_new(61, 0);
-  count_blanks += counts[0];
-  for (int i = 1; i < log2_target; i++) {
-    counts_new[i-1] = counts[i];
+  // otherwise, start working on how many of sz_equal
+  long choose = 1;
+  long total = 0;
+  long accumulated_ways = 0;
+  for (int eq_ct = 1; eq_ct <= sz_equal; eq_ct++) {
+    // sz_equal choose eq_ct
+    choose *= (sz_equal + 1 - eq_ct);
+    choose %= MOD;
+    choose *= modular_inverse(eq_ct);
+    choose %= MOD;
+
+    // calc total
+    total += log2_target + 1 >= eq_ct ? exp(log2_target - eq_ct + 1) : 0;
+    long upper_b = total + (log2_target >= eq_ct ? exp(log2_target - eq_ct) - 1 : 0);
+    fprintf(stderr, "    %d counts of 2^%d, total %ld, upper bound %ld\n", eq_ct, log2_target, total, upper_b);
+
+    if (total >= target) {
+      // Already past, we have freedom
+      accumulated_ways += (choose * mod_exp(2, sz_below));
+      accumulated_ways %= MOD;
+    } else if (target > upper_b) {
+      // Hopeless
+    } else {
+      // Recursion case
+      long new_targ = target - total;
+      vector<int> new_counts(61, 0);
+      for (int i = 0; i < eq_ct; i++)  count_blanks += counts[i];
+      for (int i = eq_ct; i < log2_target; i++)  new_counts[i-eq_ct] = counts[i];
+      accumulated_ways += choose * count_ways(new_counts, count_blanks, new_targ);
+      accumulated_ways %= MOD;
+    }
   }
-  counts_new[log2_target-1] = counts[log2_target] - 1;
-  fprintf(stderr, "recursing on:  ");
-  PRINTVEC(counts_new);
-  fprintf(stderr, "  and %d blanks\n", count_blanks);
-  long subprob = count_ways(counts_new, count_blanks, target - exp(log2_target));
-  fprintf(stderr, "return %ld + %d * %ld\n", immediates, sz_equal, subprob);
-  long ret = immediates + LONG(sz_equal) * subprob;
-  return ret % MOD;
+  return (immediates + accumulated_ways) % MOD;
 }
 
 
