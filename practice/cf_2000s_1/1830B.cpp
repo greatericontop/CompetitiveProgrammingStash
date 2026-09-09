@@ -119,11 +119,9 @@ void solve() {
     int b = entry.b;
 
     // check
-    for (int othera = 1; othera <= a; othera++) {
-      long product = LONG(othera) * LONG(a);
-      if (product > 2*n)  break;
-
-      int otherb = product - b;
+    long lim = min(LONG(a), LONG(2*n) / LONG(a));
+    for (int othera = 1; othera <= lim; othera++) {
+      int otherb = othera*a - b;
       int count_of_b = state[othera][otherb];
       answers += count_of_b;
     }
