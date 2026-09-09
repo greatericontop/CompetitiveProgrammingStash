@@ -81,7 +81,7 @@ struct custom_hash {
 
   size_t operator()(uint64_t x) const {
     static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-    return splitmix64(x + FIXED_RANDOM);
+    return x ^ FIXED_RANDOM;
   }
 };
 
@@ -113,7 +113,12 @@ void solve() {
   sort(entries.begin(), entries.end());
 
   long answers = 0;
-  vector<unordered_map<int, int>> state(n+1);  //indexed by a, then store # of occurrences of each b
+  vector<unordered_map<int, int, custom_hash>> state(n+1);  //indexed by a, then store # of occurrences of each b
+
+  vector<int> ct_of_each_a(n+1, 0);
+  FORI(n)  ct_of_each_a[entries[i].a]++;
+  for (int i = 1; i <= n; i++)  state[i].reserve(ct_of_each_a[i] * 8);
+
   for (auto entry : entries) {
     int a = entry.a;
     int b = entry.b;
