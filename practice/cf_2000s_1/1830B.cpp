@@ -66,9 +66,24 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
+#pragma GCC optimize("Ofast")
 
 
 
+struct custom_hash {
+  static uint64_t splitmix64(uint64_t x) {
+    // http://xorshift.di.unimi.it/splitmix64.c
+    x += 0x9e3779b97f4a7c15;
+    x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+    x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+    return x ^ (x >> 31);
+  }
+
+  size_t operator()(uint64_t x) const {
+    static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+    return splitmix64(x + FIXED_RANDOM);
+  }
+};
 
 struct Entry {
   int a;
@@ -98,11 +113,10 @@ void solve() {
   sort(entries.begin(), entries.end());
 
   long answers = 0;
-  vector<map<int, int>> state(n+1);  //indexed by a, then store # of occurrences of each b
+  vector<unordered_map<int, int, custom_hash>> state(n+1);  //indexed by a, then store # of occurrences of each b
   for (auto entry : entries) {
     int a = entry.a;
     int b = entry.b;
-    int nonce = entry.nonce;
 
     // check
     for (int othera = 1; othera <= a; othera++) {
