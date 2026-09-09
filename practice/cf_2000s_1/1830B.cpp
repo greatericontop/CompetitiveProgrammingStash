@@ -113,7 +113,7 @@ void solve() {
   sort(entries.begin(), entries.end());
 
   long answers = 0;
-  vector<unordered_map<int, int, custom_hash>> state(n+1);  //indexed by a, then store # of occurrences of each b
+  vector<unordered_map<int, int>> state(n+1);  //indexed by a, then store # of occurrences of each b
   for (auto entry : entries) {
     int a = entry.a;
     int b = entry.b;
@@ -122,6 +122,7 @@ void solve() {
     long lim = min(LONG(a), LONG(2*n) / LONG(a));
     for (int othera = 1; othera <= lim; othera++) {
       int otherb = othera*a - b;
+      if (state[othera].count(otherb) == 0)  continue;
       int count_of_b = state[othera][otherb];
       answers += count_of_b;
     }
