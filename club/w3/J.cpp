@@ -109,10 +109,20 @@ void solve() {
   for (int k = 1; k < n; k++) {
     fprintf(stderr, "before k=%d, left right %d %d\n", k, left, right);
     int m1 = locations_of_p[k+1], m2 = locations_of_q[k+1];
-    int valid_left_idx = max(m1, m2);
-    if (valid_left_idx > left)  valid_left_idx = 1;
-    int valid_right_idx = min(m1, m2);
-    if (valid_right_idx < right)  valid_right_idx = n;
+    if ((left <= m1 && m1 <= right) || (left <= m2 && m2 <= right)) {
+      // either one lodged inside
+      left = min(left, min(m1, m2));
+      right = max(right, max(m1, m2));
+      continue;
+    }
+
+    int valid_left_idx = 0;
+    if (m1 < left)  valid_left_idx = max(valid_left_idx, m1);
+    if (m2 < left)  valid_left_idx = max(valid_left_idx, m2);
+
+    int valid_right_idx = n+1;
+    if (m1 > right)  valid_right_idx = min(valid_right_idx, m1);
+    if (m2 > right)  valid_right_idx = min(valid_right_idx, m2);
 
     int valid_left_ct = left - valid_left_idx;
     int valid_right_ct = valid_right_idx - right;
