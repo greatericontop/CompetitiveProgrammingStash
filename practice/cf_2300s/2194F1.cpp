@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -102,16 +102,13 @@ vector<long> merge(vector<long>& cur, const vector<long>& other, int expk) {
 long run_dp(int v, AdjList& adj, vector<int>& parents, vector<int>& subtree_xors, vector<vector<long>>& dp, const vector<int>& bspace_xors, const vector<int>& b, int k, int expk) {
   dp[v][0] = 1;
   for (int x = 1; x < expk; x++)  dp[v][x] = 0;
-  if (adj[v].empty()) {
-    // dp[v][0] = 1 for a leaf
-    return 0;
-  }
 
   for (int child : adj[v]) {
     run_dp(child, adj, parents, subtree_xors, dp, bspace_xors, b, k, expk);
     dp[v] = merge(dp[v], dp[child], expk);
   }
 
+  // for leaves, there still could be extra
   long extra = 0;
   for (int i = 0; i < expk; i++) {
     // if we take xor of bspace_xors[i] and compare it to subtree_xors[v], if the difference is one of the b's, then include it
@@ -125,6 +122,7 @@ long run_dp(int v, AdjList& adj, vector<int>& parents, vector<int>& subtree_xors
     }
     if (ok) {
       extra += dp[v][i];
+      extra %= MOD;
     }
   }
 
