@@ -76,7 +76,7 @@ void solve() {
   long n, m;  cin >> n >> m;
   long n_msb_only = 1LL << (63 - __builtin_clzll(n));
 
-  if (m > n_msb_only) {
+  if (m >= n_msb_only) {
     long t = n ^ m;  assert(t <= n_msb_only);
     cout << 1 << "\n";
     cout << n << " " << m << "\n";
