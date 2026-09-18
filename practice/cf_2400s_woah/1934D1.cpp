@@ -82,7 +82,13 @@ void solve() {
     cout << n << " " << m << "\n";
   } else {
     long n_reduced = n ^ n_msb_only;
+    if (n_reduced == 0) {
+      // no op possible
+      cout << "-1\n";
+      return;
+    }
     long n_second_msb = 1LL << (63 - __builtin_clzll(n_reduced));
+    //fprintf(stderr, "n_reduced = %ld, n_second_msb = %ld, clzll %d\n", n_reduced, n_second_msb, __builtin_clzll(n_reduced));
     long lim = 2 * n_second_msb - 1;
     if (m > lim) {
       cout << "-1\n";
