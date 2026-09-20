@@ -142,13 +142,20 @@ void solve() {
   FORI1(n-1) {
     cin >> a[i];
   }
-  int max_a_idx = max_element(a.begin(), a.end()) - a.begin();
+  int max_a = *max_element(a.begin(), a.end());
   // try solving for maximum at max_a_idx and max_a_idx+1
   set<int> maxes;
-  maxes.insert(max_a_idx);
-  maxes.insert(max_a_idx+1);
-  maxes.insert(1);
-  maxes.insert(n);
+
+  int max_a_start = -1, max_a_end = -1;
+  for (int i = 1; i <= n-1; i++) {
+    if (a[i] == max_a) {
+      if (max_a_start == -1)  max_a_start = i;
+      max_a_end = i;
+    }
+  }
+  maxes.insert(max_a_start);
+  maxes.insert(max_a_end+1);
+
   long ans = 0;
   for (int maxidx : maxes) {
     long res = solve_case(maxidx, n, a);
