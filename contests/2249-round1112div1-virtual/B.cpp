@@ -61,11 +61,66 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 constexpr static inline int rounddown(int a, int b) { return (a / b) * b; }
 constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 //constexpr static long MOD = 1'000'000'007LL;
-//constexpr static long MOD =   998'244'353LL;
+constexpr static long MOD =   998'244'353LL;
 
 
 
 
+
+
+long solve_case(int maxidx, int n, const vector<int>& a) {
+  // remember a[1] means between 1 and 2
+
+  // verify monotonicity
+  for (int i = 2; i <= maxidx-1; i++) {
+    if (a[i] < a[i-1])  return 0;
+  }
+  for (int i = n-2; i >= maxidx; i--) {
+    if (a[i] < a[i+1])  return 0;
+  }
+
+  set<int> unplaced;  for (int i = 1; i <= n; i++)  unplaced.insert(i);
+  vector<int> placements(n+1, -1);
+  for (int i = 2; i <= maxidx-1; i++) {
+    // first occurrence of a new prefix max requires placing a[i] at i
+    if (a[i] > a[i-1]) {
+      if (!unplaced.count(a[i])) {
+        // impossible: thrashing
+        return 0;
+      }
+      placements[i] = a[i];
+      unplaced.erase(a[i]);
+    }
+  }
+  for (int i = n-2; i >= maxidx; i--) {
+    // placing it at i+1 this time
+    if (a[i] > a[i+1]) {
+      if (!unplaced.count(a[i]))  return 0;
+      placements[i+1] = a[i];
+      unplaced.erase(a[i]);
+    }
+  }
+
+  long tot = 0;
+  int spots_avail = 0;
+  int i = maxidx-1, j = maxidx+1;  //first unavailable spots
+  for (auto it = unplaced.rbegin(); it != unplaced.rend(); ++it) {
+    int x = *it;
+    while (i >= 1 && a[i] > x) {
+      i--;
+      if (placements[i] == -1)  spots_avail++;
+    }
+    while (j <= n && a[j] > x) {
+      j++;
+      if (placements[j] == -1)  spots_avail++;
+    }
+    if (spots_avail == 0)  return 0;
+    tot = (tot * spots_avail) % MOD;
+    spots_avail--;
+  }
+
+  return tot;
+}
 
 
 
@@ -75,6 +130,14 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 void solve() {
   int n;
   cin >> n;
+  vector<int> a(n);
+  FORI1(n-1) {
+    cin >> a[i];
+  }
+  int max_a_idx = max_element(a.begin(), a.end()) - a.begin();
+  // try solving for maximum at max_a_idx and max_a_idx+1
+  long ans = (solve_case(max_a_idx, n, a) + solve_case(max_a_idx+1, n, a)) % MOD;
+  cout << ans << "\n";
 
 }
 
