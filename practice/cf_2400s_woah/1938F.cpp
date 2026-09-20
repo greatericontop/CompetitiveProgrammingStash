@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -114,8 +114,6 @@ void solve() {
   int _n;
   cin >> _n;
   const int n = _n;
-  vector<int> a(n);
-  FORI(n)  cin >> a[i];
 
   set<int> primefactors;
   int n2 = n;
@@ -125,7 +123,11 @@ void solve() {
       while (n2 % x == 0)  n2 /= x;
     }
   }
-  if (n2 > 1)  primefactors.insert(n);
+  if (n2 > 1)  primefactors.insert(n2);
+  PRINTVEC(vector<int>(primefactors.begin(), primefactors.end()));
+
+  vector<int> a(n);
+  FORI(n)  cin >> a[i];
 
   Fraction best = {.top = 1, .bottom = 0};
   for (int p : primefactors) {
