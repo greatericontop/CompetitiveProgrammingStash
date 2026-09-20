@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -71,6 +71,8 @@ constexpr static long MOD =   998'244'353LL;
 long solve_case(int maxidx, int n, const vector<int>& a) {
   // remember a[1] means between 1 and 2
 
+  fprintf(stderr, "\nsolve_case(maxidx=%d, n=%d)\n", maxidx, n);
+
   // verify monotonicity
   for (int i = 2; i <= maxidx-1; i++) {
     if (a[i] < a[i-1])  return 0;
@@ -79,11 +81,13 @@ long solve_case(int maxidx, int n, const vector<int>& a) {
     if (a[i] < a[i+1])  return 0;
   }
 
-  set<int> unplaced;  for (int i = 1; i <= n; i++)  unplaced.insert(i);
+  fprintf(stderr, "monotonicity check passed\n");
+
+  set<int> unplaced;  for (int i = 1; i < n; i++)  unplaced.insert(i);
   vector<int> placements(n+1, -1);
-  for (int i = 2; i <= maxidx-1; i++) {
+  for (int i = 1; i <= maxidx-1; i++) {
     // first occurrence of a new prefix max requires placing a[i] at i
-    if (a[i] > a[i-1]) {
+    if (i == 1 || a[i] > a[i-1]) {
       if (!unplaced.count(a[i])) {
         // impossible: thrashing
         return 0;
@@ -92,29 +96,33 @@ long solve_case(int maxidx, int n, const vector<int>& a) {
       unplaced.erase(a[i]);
     }
   }
-  for (int i = n-2; i >= maxidx; i--) {
+  for (int i = n-1; i >= maxidx; i--) {
     // placing it at i+1 this time
-    if (a[i] > a[i+1]) {
+    if (i == n-1 || a[i] > a[i+1]) {
       if (!unplaced.count(a[i]))  return 0;
       placements[i+1] = a[i];
       unplaced.erase(a[i]);
     }
   }
 
-  long tot = 0;
+  PRINTVEC(a);
+  PRINTVEC(placements);
+  PRINTVEC(unplaced);
+
+  long tot = 1;
   int spots_avail = 0;
   int i = maxidx-1, j = maxidx+1;  //first unavailable spots
   for (auto it = unplaced.rbegin(); it != unplaced.rend(); ++it) {
     int x = *it;
     while (i >= 1 && a[i] > x) {
-      i--;
       if (placements[i] == -1)  spots_avail++;
+      i--;
     }
-    while (j <= n && a[j] > x) {
-      j++;
+    while (j <= n && a[j-1] > x) {
       if (placements[j] == -1)  spots_avail++;
+      j++;
     }
-    if (spots_avail == 0)  return 0;
+    fprintf(stderr, "spots avail for x=%d is %d\n", x, spots_avail);
     tot = (tot * spots_avail) % MOD;
     spots_avail--;
   }
@@ -136,7 +144,17 @@ void solve() {
   }
   int max_a_idx = max_element(a.begin(), a.end()) - a.begin();
   // try solving for maximum at max_a_idx and max_a_idx+1
-  long ans = (solve_case(max_a_idx, n, a) + solve_case(max_a_idx+1, n, a)) % MOD;
+  set<int> maxes;
+  maxes.insert(max_a_idx);
+  maxes.insert(max_a_idx+1);
+  maxes.insert(1);
+  maxes.insert(n);
+  long ans = 0;
+  for (int maxidx : maxes) {
+    long res = solve_case(maxidx, n, a);
+    fprintf(stderr, "solve_case(maxidx=%d) = %lld\n", maxidx, res);
+    ans = (ans + res) % MOD;
+  }
   cout << ans << "\n";
 
 }
