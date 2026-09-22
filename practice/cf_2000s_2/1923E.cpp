@@ -191,17 +191,18 @@ void solve() {
   vector<int> parents(n+1, -1);
   AdjList adj_before_et(n+1);
   create_directed_adj(1, adj_undirected, parents, adj_before_et);
-  EulerTour etour(n+1);
+  EulerTour etour_unmapped(n+1), etour(n+1);
   int counter = 1;
-  euler_tour(1, adj_before_et, etour, counter);
+  euler_tour(1, adj_before_et, etour_unmapped, counter);
   // remapping
   AdjList adj(n+1);
   for (int v_old = 1; v_old <= n; v_old++) {
-    int v_new = etour[v_old].first;
+    int v_new = etour_unmapped[v_old].first;
     for (int u_old : adj_before_et[v_old]) {
-      int u_new = etour[u_old].first;
+      int u_new = etour_unmapped[u_old].first;
       adj[v_new].pb(u_new);
     }
+    etour[v_new] = etour_unmapped[v_old];
   }
   fprintf(stderr, "Remapping:  ");
   for (int v_old = 1; v_old <= n; v_old++) {
