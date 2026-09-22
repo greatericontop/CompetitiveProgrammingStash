@@ -206,11 +206,16 @@ void solve() {
   }
   fprintf(stderr, "Remapping:  ");
   for (int v_old = 1; v_old <= n; v_old++) {
-    fprintf(stderr, "%d->%d  ", v_old, etour[v_old].first);
+    fprintf(stderr, "%d->%d  ", v_old, etour_unmapped[v_old].first);
+  }
+  fprintf(stderr, "\n");
+  fprintf(stderr, "New etour:  ");
+  for (int v = 1; v <= n; v++) {
+    fprintf(stderr, "%d->[%d %d]  ", v, etour[v].first, etour[v].second);
   }
   fprintf(stderr, "\n\n");
   vector<vector<int>> verts_per_color(n+1);
-  FORI1(n)  verts_per_color[colors[i]].pb(etour[i].first);
+  FORI1(n)  verts_per_color[colors[i]].pb(etour_unmapped[i].first);
 
   AdjList adj_new(n+1);
   vector<int> accessible_size(n+1);
