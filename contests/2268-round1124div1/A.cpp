@@ -73,8 +73,38 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 void solve() {
-  int n;
-  cin >> n;
+  int n, k;
+  cin >> n >> k;
+  vector<int> a(n+1);
+  FORI1(n)  cin >> a[i];
+  int left = k;
+  int right = n - k + 1;
+  long tot = 0;
+
+  if (left < right) {
+    // take all elts inside
+    for (int i = left; i <= right; i++)  tot += a[i];
+    left--;  right++;
+  } else if (left == right) {
+    tot += a[left];
+    left--;  right++;
+  } else {
+    // k > n/2, so can only pick one of left or right
+    swap(left, right);
+  }
+
+  while (true) {
+    if (left < 1) {
+      assert(right > n);
+      break;
+    }
+
+    tot += max(a[left], a[right]);
+
+    left--;  right++;
+  }
+
+  cout << tot << "\n";
 
 }
 
