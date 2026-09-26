@@ -64,6 +64,10 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 //constexpr static long MOD =   998'244'353LL;
 
 
+// this is definitely not gonna work lmao but worth a try
+#pragma GCC optimize("Ofast")
+#pragma GCC target("avx,avx2,fma")
+
 
 
 
@@ -75,6 +79,20 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 void solve() {
   int n;
   cin >> n;
+  vector<int> a(n);
+  FORI(n)  cin >> a[i];
+
+  int best = 0;
+  for (int i = 0; i < n; i++) {
+    int maxi = a[i];
+    int xorsum = a[i];
+    for (int j = i+1; j < n; j++) {
+      maxi = max(maxi, a[j]);
+      xorsum ^= a[j];
+      best = max(best, maxi & xorsum);
+    }
+  }
+  cout << best << "\n";
 
 }
 
