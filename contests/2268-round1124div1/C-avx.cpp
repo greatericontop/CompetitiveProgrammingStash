@@ -87,9 +87,9 @@ void solve() {
     int maxi = a[i];
     int xorsum = a[i];
     for (int j = i+1; j < n; j++) {
-      maxi = max(maxi, a[j]);
+      maxi = maxi > a[j] ? maxi : a[j];
       xorsum ^= a[j];
-      best = max(best, maxi & xorsum);
+      best = ((maxi & xorsum) > best) ? maxi & xorsum : best;
     }
   }
   cout << best << "\n";
