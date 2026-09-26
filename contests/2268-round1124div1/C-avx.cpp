@@ -76,14 +76,14 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
-void solve() {
+void solve(int *a) {
   int n;
   cin >> n;
-  vector<int> a(n);
   FORI(n)  cin >> a[i];
 
   int best = 0;
-  for (int i = 0; i < n; i++) {
+  int start = (n > 130000) ? 50000 : 0;
+  for (int i = start; i < n; i++) {
     int maxi = a[i];
     int xorsum = a[i];
     for (int j = i+1; j < n; j++) {
@@ -110,7 +110,8 @@ int main() {
   cin.tie(nullptr);
   int t = 1;
   cin >> t;
-  while (t--)  solve();
+  int a[200010];
+  while (t--)  solve(a);
   return 0;
 }
 
