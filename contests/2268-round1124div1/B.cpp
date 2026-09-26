@@ -73,8 +73,36 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 void solve() {
-  int n;
-  cin >> n;
+  int n, q;
+  cin >> n >> q;
+  vector<int> a(n+1);
+  FORI1(n)  cin >> a[i];
+
+  int good_ct = 0, borderline_ct = 0, imposs_ct = 0;
+  auto add_to_ct = [&](int x, int v) {
+    if (x == 5 || x == 10) {
+      borderline_ct += v;
+    } else if (x == 0 || x == 3 || x == 6 || x == 9 || x == 12 || x == 15) {
+      good_ct += v;
+    } else {
+      imposs_ct += v;
+    }
+  };
+  auto calc_answer = [&]() {
+    // unless n = 1, all borderline can be converted (you can convert 1 at a time by using a good or using an imposs)
+    return good_ct + borderline_ct;
+  };
+  FORI1(n)  add_to_ct(a[i], 1);
+
+  cout << calc_answer() << " ";
+  while (q --> 0) {
+    int p, x;  cin >> p >> x;
+    add_to_ct(a[p], -1);
+    a[p] = x;
+    add_to_ct(a[p], 1);
+    cout << calc_answer() << " ";
+  }
+  cout << "\n";
 
 }
 
