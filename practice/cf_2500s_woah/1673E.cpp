@@ -109,9 +109,11 @@ void solve() {
   vector<int> b(n);
   FORI(n)  cin >> b[i];
 
-  vector<int> answers(20);  //place k-2
-  vector<int> answers_border(20);  //place k-1
-  for (int sz = 1; sz <= 19; sz++) {
+  // bruh u suck at cp
+  // the max length is 20 (2^1 from the first, then 2^2, 2^4, etc.)
+  vector<int> answers(22);  //place k-2
+  vector<int> answers_border(22);  //place k-1
+  for (int sz = 1; sz < 22; sz++) {
     answers[sz] = calc_signed_choose(n-2-sz, k-2);
     answers_border[sz] = calc_signed_choose(n-1-sz, k-1);
   }
