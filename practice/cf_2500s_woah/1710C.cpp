@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -61,12 +61,12 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 constexpr static inline int rounddown(int a, int b) { return (a / b) * b; }
 constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 //constexpr static long MOD = 1'000'000'007LL;
-//constexpr static long MOD =   998'244'353LL;
+constexpr static long MOD =   998'244'353LL;
 
 
 
 int xors[8];
-int frees[8];
+int covers[8];
 
 
 
@@ -80,21 +80,68 @@ void solve() {
     assert(0 <= ab && ab <= 1 && 0 <= bc && bc <= 1 && 0 <= ac && ac <= 1);
     xors[m] = (ab << 2) | (bc << 1) | ac;
     if (ab + bc + ac == 2) {
-      // then frees[m] = which index 0(ab), 1(bc), 2(ac) is freed
-      if (ab == 0)  frees[m] = 0;
-      else if (bc == 0)  frees[m] = 1;
-      else  frees[m] = 2;
+      // then covered[m] = which index 0(ab), 1(bc), 2(ac) is covered
+      if (ab == 0)  covers[m] = 4;
+      else if (bc == 0)  covers[m] = 2;
+      else  covers[m] = 1;
     } else {
-      frees[m] = -1;
+      covers[m] = -1;
     }
+  }
+  for (int m = 0; m < 8; m++) {
+    fprintf(stderr, "mask %d has xors %d and covers %d\n", m, xors[m], covers[m]);
   }
   string s;
   cin >> s;
-  vector<
+  vector<vector<long>> dp_old(8, vector<long>(8, 0));
+  vector<vector<long>> dp_new(8, vector<long>(8, 0));
+  // initially nothing is free and nothing is covered
+  dp_old[0][0] = 1;
 
-  for (char c : s) {
+  for (int i = 0; i < s.size(); i++) {
+    char c = s[i];
+    fprintf(stderr, "  i = %d\n", i);
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        dp_new[i][j] = 0;
+      }
+    }
 
+    for (int free = 0; free < 8; free++) {
+      for (int covered = 0; covered < 8; covered++) {
+        for (int o = 0; o < 8; o++) {
+          // want to use o for assignments of a, b, c
+          // assignment is invalid if c=='0' and a bit is 1 while it is not free
+          if (c == '0' && (o & ~free))  continue;
+
+          int new_free = free;
+          if (c == '1') {
+            // then set bits in new_free if n has a 1 while o is 0
+            // remember freeness is between o and n!!!!!!!!
+            new_free |= (~o) & 0b111;
+          }
+
+          int new_covered = covered;
+          if (covers[o] != -1) {
+            new_covered |= covers[o];
+          }
+
+          fprintf(stderr, "[%d][%d] -> [%d][%d] (+%ld)\n", free, covered, new_free, new_covered, dp_old[free][covered]);
+          dp_new[new_free][new_covered] += dp_old[free][covered];
+          dp_new[new_free][new_covered] %= MOD;
+        }
+      }
+    }
+
+    swap(dp_old, dp_new);
   }
+
+  long ans = 0;
+  for (int free = 0; free < 8; free++) {
+    ans += dp_old[free][0b111];
+    ans %= MOD;
+  }
+  cout << ans << "\n";
 
 }
 
