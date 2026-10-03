@@ -231,12 +231,14 @@ void solve() {
     int valuehigher = values[c] + k;
 
     answer += 2 * appearances_total[valuelower];
-    answer += 2 * appearances_total[valuehigher];
     answer -= all_appearances[c][valuelower];
+    answer += 2 * appearances_total[valuehigher];
     answer -= all_appearances[c][valuehigher];
   }
 
-
+  if (k == 0) {
+    answer += n;
+  }
 
 
   cout << answer << endl;
