@@ -11,9 +11,9 @@ using namespace std;
     for (const auto& _x : (vec))  fprintf(stderr, "%d ", _x); \
     fprintf(stderr, "\n"); \
   } while (0)
-  #define PRINTVECL(vec) do { \
+  #define PRINTVECD(vec) do { \
     fprintf(stderr, "%s:  ", #vec); \
-    for (const auto& _x : (vec))  fprintf(stderr, "%lld ", _x); \
+    for (const auto& _x : (vec))  fprintf(stderr, "%llf ", _x); \
     fprintf(stderr, "\n"); \
   } while (0)
   #define PRINTMAP(map) do { \
@@ -45,7 +45,7 @@ using namespace std;
   #define PRINTVECPL(...)
   #define PRINTVECB(...)
 #endif
-#define long int64_t
+#define ll int64_t
 #define pb push_back
 #define LONG(x) ((long) (x))
 #define INT(x) ((int) (x))
@@ -61,7 +61,7 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 constexpr static inline int rounddown(int a, int b) { return (a / b) * b; }
 constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 //constexpr static long MOD = 1'000'000'007LL;
-constexpr static long MOD =   998'244'353LL;
+//constexpr static long MOD =   998'244'353LL;
 
 
 
@@ -70,95 +70,32 @@ constexpr static long MOD =   998'244'353LL;
 
 
 
-struct Block {
-  int big;
-  int small;
-  int ct;
-
-  bool operator < (const Block& other) const {
-    if (big != other.big)  return big < other.big;
-    return small < other.small;
-    // do not compare by ct
-  }
-};
+using LD = long double;
 
 
 void solve() {
-  int n;
-  cin >> n;
-  vector<long> factorials(n+2, 1);
-  for (int i = 1; i < n+2; i++) {
-    factorials[i] = (factorials[i-1] * LONG(i)) % MOD;
-  }
-  set<Block> blocks;
+  int n, p;
+  cin >> n >> p;
+  vector<int> t(n);
+  FORI(n)  cin >> t[i];
+
+  vector<LD> x(n);
+  FORI(n)  x[i] = ((LD) t[i]);
+  //PRINTVECD(x);
+  LD sumx = 0;
+  FORI(n)  sumx += (LD) x[i];
+  LD scale = ((LD) p) / sumx;
+
+  FORI(n)  x[i] = x[i] * scale;
+  //PRINTVECD(x);
+
+  // calculate answer
+  LD answer = 0;
   FORI(n) {
-    int l, w;  cin >> l >> w;
-    if (l < w)  swap(l, w);
-    Block b = {.big = l, .small = w, .ct = 1};
-    auto it = blocks.find(b);
-    if (it == blocks.end()) {
-      blocks.insert(b);
-    } else {
-      Block old = *it;
-      blocks.erase(it);
-      old.ct += 1;
-      blocks.insert(old);
-    }
+    answer += x[i] * x[i] / ((LD) t[i]);
   }
 
-  vector<Block> blocksvec;  blocksvec.reserve(blocks.size());
-  for (Block b : blocks)  blocksvec.pb(b);
-  sort(blocksvec.begin(), blocksvec.end(), [](Block b1, Block b2) {
-    return b2 < b1;
-  });
-  for (Block b : blocksvec) {
-    fprintf(stderr, "Block{%d,%d  x%d}\n", b.big, b.small, b.ct);
-  }
-
-
-  long answer = 1;
-  Block cur = blocksvec[0];
-  if (cur.big != cur.small)  answer *= 2;  //first block may be placed in two orientations
-  answer *= factorials[cur.ct];
-  answer %= MOD;
-
-  for (int i = 1; i < blocksvec.size(); i++) {
-    Block next = blocksvec[i];
-    // ensure that they fit
-    assert(next.big <= cur.big);
-    if (next.small > cur.small) {
-      // then these two will not fit in each other
-      answer = 0;
-    } else {
-      // placements
-      long placements = 0;
-      {
-        //long way
-        int spacex = cur.big - next.big + 1;
-        int spacey = cur.small - next.small + 1;
-        placements += LONG(spacex)*LONG(spacey);
-        placements %= MOD;
-      }
-      if (next.small != next.big) {
-        //short way
-        int spacex = cur.small - next.big + 1;
-        int spacey = cur.big - next.small + 1;
-        if (spacex >= 0 && spacey >= 0) {
-          placements += LONG(spacex)*LONG(spacey);
-          placements %= MOD;
-        }
-      }
-      fprintf(stderr, "i=%d placements %ld\n", i, placements);
-
-      long ordering = factorials[next.ct];
-      answer *= placements * ordering;
-      answer %= MOD;
-    }
-
-    cur = next;
-  }
-
-  cout << answer << "\n";
+  cout << fixed << setprecision(15) << answer << "\n";
 
 }
 
