@@ -104,6 +104,7 @@ void solve() {
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       long dsq = distancesquared(points[i], points[j]);
+      assert(dsq <= 2e18);
       update(dsq);
     }
   }
@@ -112,7 +113,7 @@ void solve() {
   fprintf(stderr, "best dist squared %ld x%ld\n", best_distance_squared, how_many);
   best_distance_squared *= 4;  //twice as long
 
-  int l = 0, r = 1e9;
+  int l = 0, r = 2e9;
   while (l < r) {
     int mid = l + (r-l)/2;
     int128 totald2 = ((int128)mid)*((int128)mid)*((int128)best_distance_squared);
@@ -123,6 +124,8 @@ void solve() {
       l = mid + 1;
     }
   }
+
+  assert(l <= 1e9);
 
   cout << l << "\n";
 }
