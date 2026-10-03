@@ -101,7 +101,7 @@ void solve() {
 
     auto which = [&](Point p) {
       long delta = score(p) - score(p1);
-      if (diff % 2 == 0 && delta == diff/2)  return 2;  // a == will be considered an open
+      if (diff % 2 == 0 && delta == diff/2)  return 1;//return 2;  // a == will be considered an open
       return delta > diff/2 ? 2 : 1;  //closer to p1 or closer to p2
     };
     // "opens" = closer to p2
