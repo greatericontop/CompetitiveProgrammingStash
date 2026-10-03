@@ -166,6 +166,8 @@ void solve() {
     }
   }
 
+  PRINTVEC(closest_points);
+
   // Find farthest distance and how many
   long best_distance_squared = 0;
   long how_many = 0;
@@ -184,6 +186,15 @@ void solve() {
     Point _p = points[closest_points[i1]];
     long best_distance_squared = distancesquared(_p, points[i1]);
     for (int i2 = closest_points[i1]; true; i2--) {
+      int i2mod = (i2 + n) % n;
+      if (distancesquared(points[i1], points[i2mod]) >= best_distance_squared) {
+        assert(distancesquared(points[i1], points[i2mod]) == best_distance_squared);
+        update(distancesquared(points[i1], points[i2mod]));
+      } else {
+        break;
+      }
+    }
+    for (int i2 = closest_points[i1]+1; true; i2++) {
       int i2mod = (i2 + n) % n;
       if (distancesquared(points[i1], points[i2mod]) >= best_distance_squared) {
         assert(distancesquared(points[i1], points[i2mod]) == best_distance_squared);
