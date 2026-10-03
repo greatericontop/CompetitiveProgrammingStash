@@ -73,16 +73,27 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 void solve() {
-  int n;
-  cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
+  seed_seq seed_seq{
+    (uint64_t) chrono::steady_clock::now().time_since_epoch().count(), // note: uint64_t truncates to 32 bits
+    (uint64_t) (new char),
+    (uint64_t) (__builtin_ia32_rdtsc())
+  };
+  mt19937_64 rng(seed_seq);
 
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+
+  for (int i = 1; i <= 100; i++) {
+    // first one
+    int which = rng() % 2;
+    cout << (which == 1 ? 'T' : 'F') << endl;
+    char correct;  cin >> correct;
+    if (correct == 'T') {
+      cout << 'F' << endl;
+      char a2;  cin >> a2;  assert(a2 == 'F');
+    } else {
+      cout << 'T' << endl;
+      char a2;  cin >> a2;  assert(a2 == 'T');
+    }
   }
-
 
 }
 

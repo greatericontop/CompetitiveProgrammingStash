@@ -75,6 +75,23 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 void solve() {
   int n;
   cin >> n;
+  vector<int> a(n);
+  FORI(n)  cin >> a[i];
+
+  vector<int> deltas(n-1);
+  for (int i = 0; i < n-1; i++) {
+    deltas[i] = a[i+1] - a[i];
+  }
+
+  int tot = 0;
+  for (int i = 0; i < n-2; i++) {
+    // if delta[i] is strictly greater delta[i+1]
+    if (deltas[i] > deltas[i+1]) {
+      tot++;
+    }
+  }
+
+  cout << tot << "\n";
 
 }
 
@@ -91,7 +108,7 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
   int t = 1;
-  cin >> t;
+  //cin >> t;
   while (t--)  solve();
   return 0;
 }
