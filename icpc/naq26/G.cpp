@@ -77,7 +77,7 @@ void solve() {
   cin >> n >> q >> num_genres;
 
   // lazy[i] is number of people who have i
-  vector<int> lazy(num_genres+1, 0);
+  map<int, int> lazy;
   map<int, int> people;
 
   while (q --> 0) {
@@ -90,7 +90,7 @@ void solve() {
           lazy[people[person]]--;
         }
         people[person] = genre;
-        lazy[genre]++;
+        lazy[genre]++;  //should default to 0
       }
     } else {
       int genre;  cin >> genre;
