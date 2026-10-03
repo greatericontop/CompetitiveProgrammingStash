@@ -175,6 +175,8 @@ void solve() {
 
       if (appearances.find(value+k) == appearances.end())  continue;  //so the map doesn't explode
       int ct_of_target = appearances[value+k];
+      if (k == 0)  ct_of_target--;  //to avoid counting ourselves
+
       answer += LONG(ct_of_target) * LONG(ct);
     }
 
@@ -190,7 +192,7 @@ void solve() {
     map<int, int>& appearances = all_appearances[r];
 
     for (auto [value, ct] : appearances) {
-      if (appearances_total.find(value+k) == appearances_total.end())  continue;  //so the map doesn't explode
+      //if (appearances_total.find(value+k) == appearances_total.end())  continue;  //so the map doesn't explode
       int ct_of_target = appearances_total[value+k] - (appearances.find(value+k) == appearances.end() ? 0 : appearances[value+k]);
       assert(ct_of_target >= 0);
       answer += LONG(ct_of_target) * LONG(ct) * 2;
@@ -208,6 +210,7 @@ void solve() {
     for (auto [value, ct] : appearances_cycle) {
       if (appearances_cycle.find(value+k) == appearances_cycle.end())  continue;
       int ct_of_target = appearances_cycle[value+k];
+      if (k == 0)  ct_of_target--;
       // 2 ways because either direction to walk
       answer += LONG(ct_of_target) * LONG(ct) * 2;
     }
