@@ -83,7 +83,7 @@ void solve() {
   set<int> active;
   FORI(n)  active.insert(i);
 
-  auto find_best = [&]() -> pairii {
+  auto find_best = [&]() -> pairll {
     long best = LLONG_MAX;  int best_i = -1;
     for (auto it = active.begin(); it != active.end(); it++) {
       int i = *it;
@@ -109,13 +109,13 @@ void solve() {
   };
   auto our_turn = [&]() {
     assert(active.size() % 2 == 0);
-    pairii best = find_best();
+    pairll best = find_best();
     cout << best.first + 1 << endl;
     assert(active.count(best.first));
     active.erase(best.first);
 
-    pairii best2 = find_best();
-    //assert(best2.second >= best.second);
+    pairll best2 = find_best();
+    assert(best2.second >= best.second);
   };
 
   if (n % 2 == 1) {
