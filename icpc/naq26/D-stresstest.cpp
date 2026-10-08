@@ -70,19 +70,33 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
-
+struct Point {
+  int x, y;
+};
 
 void solve() {
-  int n;
-  cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
-
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+  int n, k;
+  cin >> n >> k;
+  vector<Point> points(3*n);
+  FORI(n) {
+    cin >> points[i].x >> points[i].y;
+    points[i+n] = points[i];
+    points[i+2*n] = points[i];
   }
 
+
+  auto distancesquared = [](Point p1, Point p2) {
+    return LONG(p2.x-p1.x)*LONG(p2.x-p1.x) + LONG(p2.y-p1.y)*LONG(p2.y-p1.y);
+  };
+  long best = 0;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+
+    }
+  }
+
+
+  cout << best << endl;
 
 }
 
@@ -99,7 +113,7 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
   int t = 1;
-  cin >> t;
+  //cin >> t;
   while (t--)  solve();
   return 0;
 }

@@ -73,16 +73,32 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 void solve() {
-  int n;
-  cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
+  int n, m;  cin >> n >> m;
 
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+  // satisfied[i] (1 to n-1) if i->i+1 edge exists
+  vector<bool> satisfied(n, false);
+  bool fail_immediately = false;
+
+  FORI(m) {
+    int a, b;  cin >> a >> b;
+    if (a > b) {
+      fail_immediately = true;
+    } else {
+      if (b == a + 1) {
+        satisfied[a] = true;
+      }
+    }
   }
 
+  if (fail_immediately) {
+    cout << "-1\n";
+  } else {
+    int ct = 0;
+    for (int i = 1; i <= n-1; i++) {
+      if (!satisfied[i])  ct++;
+    }
+    cout << ct << "\n";
+  }
 
 }
 

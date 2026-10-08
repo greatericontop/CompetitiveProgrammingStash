@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -61,7 +61,7 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 constexpr static inline int rounddown(int a, int b) { return (a / b) * b; }
 constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 //constexpr static long MOD = 1'000'000'007LL;
-//constexpr static long MOD =   998'244'353LL;
+constexpr static long MOD =   998'244'353LL;
 
 
 
@@ -70,19 +70,95 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
+struct Block {
+  int big;
+  int small;
+  int ct;
+
+  bool operator < (const Block& other) const {
+    if (big != other.big)  return big < other.big;
+    return small < other.small;
+    // do not compare by ct
+  }
+};
 
 
 void solve() {
   int n;
   cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
-
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+  vector<long> factorials(n+2, 1);
+  for (int i = 1; i < n+2; i++) {
+    factorials[i] = (factorials[i-1] * LONG(i)) % MOD;
+  }
+  set<Block> blocks;
+  FORI(n) {
+    int l, w;  cin >> l >> w;
+    if (l < w)  swap(l, w);
+    Block b = {.big = l, .small = w, .ct = 1};
+    auto it = blocks.find(b);
+    if (it == blocks.end()) {
+      blocks.insert(b);
+    } else {
+      Block old = *it;
+      blocks.erase(it);
+      old.ct += 1;
+      blocks.insert(old);
+    }
   }
 
+  vector<Block> blocksvec;  blocksvec.reserve(blocks.size());
+  for (Block b : blocks)  blocksvec.pb(b);
+  sort(blocksvec.begin(), blocksvec.end(), [](Block b1, Block b2) {
+    return b2 < b1;
+  });
+  for (Block b : blocksvec) {
+    fprintf(stderr, "Block{%d,%d  x%d}\n", b.big, b.small, b.ct);
+  }
+
+
+  long answer = 1;
+  Block cur = blocksvec[0];
+  if (cur.big != cur.small)  answer *= 2;  //first block may be placed in two orientations
+  answer *= factorials[cur.ct];
+  answer %= MOD;
+
+  for (int i = 1; i < blocksvec.size(); i++) {
+    Block next = blocksvec[i];
+    // ensure that they fit
+    assert(next.big <= cur.big);
+    if (next.small > cur.small) {
+      // then these two will not fit in each other
+      answer = 0;
+    } else {
+      // placements
+      long placements = 0;
+      {
+        //long way
+        int spacex = cur.big - next.big + 1;
+        int spacey = cur.small - next.small + 1;
+        placements += LONG(spacex)*LONG(spacey);
+        placements %= MOD;
+      }
+      if (next.small != next.big) {
+        //short way
+        int spacex = cur.small - next.big + 1;
+        int spacey = cur.big - next.small + 1;
+        if (spacex >= 0 && spacey >= 0) {
+          placements += LONG(spacex)*LONG(spacey);
+          placements %= MOD;
+        }
+      }
+      fprintf(stderr, "i=%d placements %ld\n", i, placements);
+
+      long ordering = factorials[next.ct];
+      answer *= placements * ordering;
+      answer %= MOD;
+    }
+
+    cur = next;
+  }
+
+  cout << answer << "\n";
 
 }
 

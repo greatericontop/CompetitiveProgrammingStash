@@ -73,16 +73,30 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 void solve() {
-  int n;
-  cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
+  int n, q, num_genres;
+  cin >> n >> q >> num_genres;
 
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+  // lazy[i] is number of people who have i
+  map<int, int> lazy;
+  map<int, int> people;
+
+  while (q --> 0) {
+    char op;  cin >> op;
+    if (op == 'P') {
+      int genre, a;  cin >> genre >> a;
+      for (int i1 = 0; i1 < a; i1++) {
+        int person;  cin >> person;
+        if (people.find(person) != people.end()) {
+          lazy[people[person]]--;
+        }
+        people[person] = genre;
+        lazy[genre]++;  //should default to 0
+      }
+    } else {
+      int genre;  cin >> genre;
+      cout << lazy[genre] << "\n";
+    }
   }
-
 
 }
 

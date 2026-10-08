@@ -61,7 +61,7 @@ constexpr static inline long ceildivl(long a, long b) { return (a + b - 1) / b; 
 constexpr static inline int rounddown(int a, int b) { return (a / b) * b; }
 constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 //constexpr static long MOD = 1'000'000'007LL;
-//constexpr static long MOD =   998'244'353LL;
+constexpr static long MOD =   998'244'353LL;
 
 
 
@@ -70,20 +70,37 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
+/* O(log exp) */
+int64_t mod_exp(int64_t base, int64_t exp) {
+  int64_t result = 1;
+  while (exp > 0) {
+    if (exp & 1)  result = (result * base) % MOD;
+    base = (base * base) % MOD;
+    exp >>= 1;
+  }
+  return result;
+}
 
+/* Only works for primes, O(log MOD) */
+int64_t modular_inverse(int64_t a) {
+  return mod_exp(a, MOD - 2);
+}
 
 void solve() {
-  int n;
-  cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
+  long n;  cin >> n;
+  n += 2;
 
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
-  }
+  // if n divides 998244353, then the answer is just 0
 
+  n %= MOD;
+  long tot = 1;
+  tot *= n;  tot %= MOD;
+  tot *= (n-1+MOD);  tot %= MOD;
+  tot *= (n-2+MOD);  tot %= MOD;
 
+  //divide by 6
+  tot *= modular_inverse(6);  tot %= MOD;
+  cout << tot << endl;
 }
 
 
@@ -99,7 +116,7 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
   int t = 1;
-  cin >> t;
+  //cin >> t;
   while (t--)  solve();
   return 0;
 }

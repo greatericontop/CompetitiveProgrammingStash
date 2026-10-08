@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -68,22 +68,66 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
+using int128 = __int128;
 
-
-
+struct Point {
+  int x, y;
+};
 
 void solve() {
-  int n;
-  cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
-
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+  int n, k;
+  cin >> n >> k;
+  vector<Point> points(3*n);
+  FORI(n) {
+    cin >> points[i].x >> points[i].y;
+    points[i+n] = points[i];
+    points[i+2*n] = points[i];
   }
 
 
+
+
+  // Find farthest distance and how many
+  long best_distance_squared = 0;
+  long how_many = 0;
+  auto update = [&](long x) {
+    if (x > best_distance_squared) {
+      best_distance_squared = x;
+      how_many = 1;
+    } else if (x == best_distance_squared) {
+      how_many++;
+    }
+  };
+  auto distancesquared = [](Point p1, Point p2) {
+    return LONG(p2.x-p1.x)*LONG(p2.x-p1.x) + LONG(p2.y-p1.y)*LONG(p2.y-p1.y);
+  };
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      long dsq = distancesquared(points[i], points[j]);
+      assert(dsq <= 2e18);
+      update(dsq);
+    }
+  }
+  assert(how_many % 2 == 0);  //each arc should be drawn exactly twice
+  how_many /= 2;
+  fprintf(stderr, "best dist squared %ld x%ld\n", best_distance_squared, how_many);
+  best_distance_squared *= 4;  //twice as long
+
+  int l = 0, r = 2e9;
+  while (l < r) {
+    int mid = l + (r-l)/2;
+    int128 totald2 = ((int128)mid)*((int128)mid)*((int128)best_distance_squared);
+    if (mid > how_many)  totald2--;
+    if (totald2 >= LONG(k)*LONG(k)) {
+      r = mid;
+    } else {
+      l = mid + 1;
+    }
+  }
+
+  assert(l <= 1e9);
+
+  cout << l << "\n";
 }
 
 
@@ -99,7 +143,7 @@ int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
   int t = 1;
-  cin >> t;
+  //cin >> t;
   while (t--)  solve();
   return 0;
 }

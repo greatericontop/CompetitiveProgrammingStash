@@ -72,17 +72,20 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
-void solve() {
+void solve(vector<long>& valid_nums) {
   int n;
   cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
 
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+  long best_diff = 1e15;
+  for (int target : valid_nums) {
+    if (target < n)  continue;
+    long diff = target - n;
+    best_diff = min(best_diff, diff);
   }
 
+  assert(best_diff <= 1e15);
+
+  cout << n + best_diff << "\n";
 
 }
 
@@ -98,9 +101,22 @@ void solve() {
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
+
+  vector<long> valid_nums;
+  for (int digitcount = 1; digitcount <= 9; digitcount++) {
+    for (int firstdigit = 1; firstdigit <= 10-digitcount; firstdigit++) {
+      long x = 0;
+      for (int d = firstdigit; d < firstdigit+digitcount; d++) {
+        x = 10*x + d;
+      }
+      valid_nums.pb(x);
+    }
+  }
+  //PRINTVECL(valid_nums);
+
   int t = 1;
   cin >> t;
-  while (t--)  solve();
+  while (t--)  solve(valid_nums);
   return 0;
 }
 

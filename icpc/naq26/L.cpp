@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -11,9 +11,9 @@ using namespace std;
     for (const auto& _x : (vec))  fprintf(stderr, "%d ", _x); \
     fprintf(stderr, "\n"); \
   } while (0)
-  #define PRINTVECL(vec) do { \
+  #define PRINTVECD(vec) do { \
     fprintf(stderr, "%s:  ", #vec); \
-    for (const auto& _x : (vec))  fprintf(stderr, "%lld ", _x); \
+    for (const auto& _x : (vec))  fprintf(stderr, "%llf ", _x); \
     fprintf(stderr, "\n"); \
   } while (0)
   #define PRINTMAP(map) do { \
@@ -45,7 +45,7 @@ using namespace std;
   #define PRINTVECPL(...)
   #define PRINTVECB(...)
 #endif
-#define long int64_t
+#define ll int64_t
 #define pb push_back
 #define LONG(x) ((long) (x))
 #define INT(x) ((int) (x))
@@ -70,19 +70,32 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
+using LD = long double;
 
 
 void solve() {
-  int n;
-  cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
+  int n, p;
+  cin >> n >> p;
+  vector<int> t(n);
+  FORI(n)  cin >> t[i];
 
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+  vector<LD> x(n);
+  FORI(n)  x[i] = ((LD) t[i]);
+  //PRINTVECD(x);
+  LD sumx = 0;
+  FORI(n)  sumx += (LD) x[i];
+  LD scale = ((LD) p) / sumx;
+
+  FORI(n)  x[i] = x[i] * scale;
+  //PRINTVECD(x);
+
+  // calculate answer
+  LD answer = 0;
+  FORI(n) {
+    answer += x[i] * x[i] / ((LD) t[i]);
   }
 
+  cout << fixed << setprecision(15) << answer << "\n";
 
 }
 

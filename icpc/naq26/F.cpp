@@ -75,14 +75,13 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 void solve() {
   int n;
   cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
-
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+  vector<bool> used(4, false);
+  FORI(n) {
+    int x;  cin >> x;
+    used[(x-1)/10] = true;
   }
-
+  int out = used[0] + used[1] + used[2] + used[3];
+  cout << out << "\n";
 
 }
 

@@ -70,19 +70,31 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
-
+struct Point {
+  int x, y;
+};
 
 void solve() {
-  int n;
-  cin >> n;
-  vector<string> ans(n, string(n, '.'));
-  ans[0][1] = 'C';
-  ans[1][0] = 'C';
-
-  for (int i = 0; i < n; i++) {
-    cout << ans[i] << "\n";
+  int n, k;
+  cin >> n >> k;
+  vector<Point> points(3*n);
+  FORI(n) {
+    cin >> points[i].x >> points[i].y;
+    points[i+n] = points[i];
+    points[i+2*n] = points[i];
   }
 
+  vector<long> farthest_distances(n);
+  vector<long> farthest_distances_multiplicities(n);  // 1 or 2
+  for (int p1 = 0; p1 < n; p1++) {
+    //find farthest point away from p1
+    int l = p1 + 1, r = p1 + n - 1;
+    while (l < r) {
+      // Ask: would it be helpful for us to move from cur to cur+1?
+
+
+    }
+  }
 
 }
 
