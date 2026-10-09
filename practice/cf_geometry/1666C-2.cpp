@@ -104,28 +104,7 @@ void solve() {
   });
   Point a = p[0], b = p[1], c = p[2];
 
-  if (a.x != b.x && b.x != c.x) {
-    noncollinear(a, b, c);
-  } else if (a.x == b.x && b.x == c.x) {
-    assert(a.y <= b.y && b.y <= c.y);
-    printanswer({
-      {a, c},
-    });
-  } else {
-    // two are collinear
-    if (a.x == c.x)  swap(b, c);
-    if (b.x == c.x)  swap(a, c);
-    assert(a.x == b.x && b.x != c.x);
-
-    int shared_x = a.x;
-    int other_x = c.x;
-    int miny = min(a.y, min(b.y, c.y));
-    int maxy = max(a.y, max(b.y, c.y));
-    printanswer({
-      {Point{shared_x, miny}, Point{shared_x, maxy}},
-      {c, Point{shared_x, c.y}},
-    });
-  }
+  noncollinear(a, b, c);
 
 
 }
