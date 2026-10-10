@@ -2,7 +2,7 @@
 using namespace std;
 
 
-#define GREATERIC_DEBUG
+//#define GREATERIC_DEBUG
 
 
 #ifdef GREATERIC_DEBUG
@@ -189,7 +189,7 @@ int main() {
     -Wno-error=unused-variable -Wno-error=unused-parameter -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -O1  */
 
 /*
- * This code contains the use of comments! You can identify them with the "//" or "/*" symbols.
+ * This code contains the use of comments! You can identify them with the "//" or "/" symbols.
  * Comments are used to explain the code and make it easier to understand.
  * They are ignored by the compiler and do not affect the execution of the program.
  * In this code, comments are used to explain the purpose of the code, the input and output format, and the logic behind the solution.
