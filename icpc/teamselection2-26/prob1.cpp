@@ -70,11 +70,47 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 
 
 
+bool attempt(const string& s, int lim) {
+  int cur_budget = 0;
+  int cur_backlog = 0;
+  for (char c : s) {
+    if (c == '0') {
+      // need to use budget, or it causes backlog
+      if (cur_budget > 0)  cur_budget--;
+      else  cur_backlog++;
+    } else {
+      // 1, refreshes budget, minus backlog
+      int new_budget = lim;
+      new_budget -= cur_backlog;
+      if (new_budget < 0)  return false;
+
+      cur_budget = new_budget;
+      cur_backlog = 0;
+    }
+  }
+  return (cur_backlog == 0);  //last one should've used all budget
+}
+
 
 
 void solve() {
   int n;
   cin >> n;
+  string s;
+  cin >> s;
+
+  int l = 0, r = n;
+  while (l < r) {
+    int i = l + (r-l)/2;
+    bool works = attempt(s, i);
+    if (works) {
+      r = i;
+    } else {
+      l = i + 1;
+    }
+  }
+
+  cout << l << "\n";
 
 }
 
