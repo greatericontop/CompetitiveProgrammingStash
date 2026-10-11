@@ -153,28 +153,30 @@ void solve() {
     }
     fprintf(stderr, "i=%d = %c\n", i, forced_answers[i]);
     // now propagate implications
-    for (int s = 0; s < n; s++) {  //student s
-      vector<int> correct_answers;
-      for (int h = 0; h < k; h++) {
-        if (a[s][h] != 'X' && a[s][h] == forced_answers[h]) {
-          correct_answers.pb(h);
-        }
-      }
-      fprintf(stderr, "  student %d has correct answers", s); PRINTVEC(correct_answers);
-      if (correct_answers.size() >= 2) {
-        impossible = true;
-        break;
-      } else if (correct_answers.size() >= 1) {
-        // then rest must be false
+    for (int zz = 0; zz < k; zz++) {
+      for (int s = 0; s < n; s++) {  //student s
+        vector<int> correct_answers;
         for (int h = 0; h < k; h++) {
-          if (h == correct_answers.front())  continue;
-          if (a[s][h] == 'X')  continue;
-          if (forced_answers[h] == a[s][h]) {
-            impossible = true;
-            break;
-          } else {
-            fprintf(stderr, "  student %d forces position %d\n", s, h);
-            forced_answers[h] = flip(a[s][h]);
+          if (a[s][h] != 'X' && a[s][h] == forced_answers[h]) {
+            correct_answers.pb(h);
+          }
+        }
+        fprintf(stderr, "  student %d has correct answers", s); PRINTVEC(correct_answers);
+        if (correct_answers.size() >= 2) {
+          impossible = true;
+          break;
+        } else if (correct_answers.size() >= 1) {
+          // then rest must be false
+          for (int h = 0; h < k; h++) {
+            if (h == correct_answers.front())  continue;
+            if (a[s][h] == 'X')  continue;
+            if (forced_answers[h] == a[s][h]) {
+              impossible = true;
+              break;
+            } else {
+              fprintf(stderr, "  student %d forces position %d\n", s, h);
+              forced_answers[h] = flip(a[s][h]);
+            }
           }
         }
       }
