@@ -80,7 +80,6 @@ constexpr static inline int roundup(int a, int b) { return ceildiv(a, b) * b; }
 struct Node {
   int parent;
   int number_here;
-  int ancestors[20];
   vector<int> queries_here;
   vector<int> children;
 };
@@ -109,29 +108,33 @@ void solve() {
   int q;  cin >> q;
 
   vector<Node> nodes;  nodes.reserve(q + 100);  // 1 million * (vector tags should fit)
-  nodes.pb(Node{.parent = -1, .number_here = -1, .ancestors = {}});
+
+  // allocate int[q][20] using malloc
+  auto *ancestors = (int(*)[20]) calloc(sizeof(int) * (q + 100) * 20, 1);
+
+  nodes.pb(Node{.parent = -1, .number_here = -1});
   int cur = 0;  //which node number we are at
   stack<int> st;
   st.push(cur);
 
   auto binlift = [&](int node) {
-    int * ancestors = nodes[node].ancestors;
+    int * anc = ancestors[node];
 
     int p = nodes[node].parent;
-    ancestors[0] = p;
+    anc[0] = p;
     for (int i = 0; i < 19; i++) {
-      p = nodes[p].ancestors[i];
-      ancestors[i+1] = p;
+      p = ancestors[p][i];
+      anc[i+1] = p;
     }
   };
   auto insert_new_node = [&](int parent, int number_here) -> int {
     int idx = nodes.size();
-    nodes.pb(Node{.parent = parent, .number_here = number_here, .ancestors = {}});
+    nodes.pb(Node{.parent = parent, .number_here = number_here});
     nodes[parent].children.pb(idx);
     binlift(idx);
 
     fprintf(stderr, "Inserted node %d (parent %d), ancestors: ", idx, parent);
-    for (int a : nodes[idx].ancestors)  fprintf(stderr, " %d", a);
+    //for (int a : nodes[idx].ancestors)  fprintf(stderr, " %d", a);
     fprintf(stderr, "\n");
 
     return idx;
@@ -139,7 +142,7 @@ void solve() {
   auto go_up = [&](int node, int amt) -> int {
     for (int b = 0; amt > 0; b++) {
       if (amt & 1) {
-        node = nodes[node].ancestors[b];
+        node = ancestors[node][b];
       }
       amt >>= 1;
     }
@@ -169,6 +172,8 @@ void solve() {
     }
     fprintf(stderr, "After op #%d, cur = %d\n", idx, cur);
   }
+
+  free(ancestors);  ancestors = nullptr;
 
   if (true) {
     vector<int> answers(q, -1);
