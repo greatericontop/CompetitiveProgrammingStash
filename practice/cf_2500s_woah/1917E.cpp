@@ -118,6 +118,9 @@ void solve() {
       }
     }
     assert(k == 0);
+  } else if (k == 2 && n == 2) {
+    a[0][0] = '1';
+    a[1][1] = '1';
   } else if (k == 2 || k == n*n-2) {
     cout << "No\n";
     return;
