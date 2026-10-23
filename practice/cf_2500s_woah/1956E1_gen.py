@@ -1,6 +1,14 @@
 from random import *
 
 
+def gen_xxsmall():
+    n = 2
+    nums = [randint(0, 10) for _ in range(n)]
+    print(1)
+    print(n)
+    print(*nums)
+
+
 def gen_xsmall():
     n = 3
     nums = [randint(0, 10) for _ in range(n)]

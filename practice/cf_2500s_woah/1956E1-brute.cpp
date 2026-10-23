@@ -80,8 +80,8 @@ void solve() {
   FORI(n)  cin >> a[i];
 
   for (int t = 0; t < 220000; t++) {
-    for (int i = 1; i < n; i++) {
-      a[i] = max(a[i] - a[i-1], 0);
+    for (int i = 0; i < n; i++) {
+      a[(i+1)%n] = max(a[(i+1)%n] - a[i], 0);
     }
   }
 
