@@ -172,6 +172,7 @@ void solve() {
       l = m + 1;
       // and plus 1 since it moves up
       l++;  r++;
+      l = min(l, INT(path.size())-1);
       r = min(r, INT(path.size())-1);
     }
   }
