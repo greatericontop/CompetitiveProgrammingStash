@@ -1,4 +1,8 @@
+#pragma gcc optimize("Ofast")
+
+
 #include <bits/stdc++.h>
+
 using namespace std;
 #define int long long
 
@@ -37,9 +41,9 @@ signed main() {
       // cout << a << " " << b << " " << val << endl;
       if (val && a && b) dp[i] = min(dp[i], dp[a] + dp[b]);
     }
+    for (int j=1; j<i; j++) {
+      dp[i] = min(dp[i], dp[j] + dp[i-j]);
+    }
   }
-  // for (int i=1; i<=n; i++) {
-  //   cout << dp[i] << endl;
-  // }
   cout << dp[n] << endl;
 }
