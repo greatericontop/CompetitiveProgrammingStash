@@ -117,8 +117,14 @@ void solve() {
     cout << ans << "\n";
     return;
   }
-  k++;
-  objects.pb({n, m});
+  bool extra_final = false;
+  if (objects.back().a != n || objects.back().b != m) {
+    extra_final = true;
+    k++;
+    objects.pb({n, m});
+  }
+
+  for (Object o : objects)  fprintf(stderr, "%d %d\n", o.a, o.b);
 
   auto choose = [&](int x, int y) {
     assert(x <= n+m);  assert(y <= n+m);
@@ -127,17 +133,18 @@ void solve() {
   /*
    * Probability to reach end, given starting at start
    */
-  auto a_to_b_prob = [&](Object start, Object end) -> long {
-    if (!(end.a > start.a && end.b > start.b)) {
+  auto a_to_b_prob = [&](Object start, Object end, Object final_endpoint) -> long {
+    if (!(end.a >= start.a && end.b >= start.b)) {
       return 0;
     }
     int da1 = end.a - start.a;
-    int da2 = n - end.a;
+    int da2 = final_endpoint.a - end.a;
     int db1 = end.b - start.b;
-    int db2 = m - end.b;
+    int db2 = final_endpoint.b - end.b;
     long denom = choose(da1+da2+db1+db2, da1+da2);  //arrange total number of A and B till the end
     long num1 = choose(da1+db1, da1);  //go to first half
     long num2 = choose(da2+db2, da2);  //go to second half
+    //fprintf(stderr, "  num1 = %ld num2 = %ld denom = %ld\n", num1, num2, denom);
     return (((num1 * num2) % MOD) * modular_inverse(denom)) % MOD;
   };
 
@@ -148,7 +155,8 @@ void solve() {
   vector<vector<long>> conditional_probabilities(k, vector<long>(k, -1));
   for (int i = 0; i < k-1; i++) {
     // base cases: i to i+1
-    conditional_probabilities[i][i+1] = a_to_b_prob(objects[i], objects[i+1]);
+    conditional_probabilities[i][i+1] = a_to_b_prob(objects[i], objects[i+1], {n, m});
+    fprintf(stderr, "a to b prob of i1=%d to i2=%d: %ld\n", i, i+1, a_to_b_prob(objects[i], objects[i+1], {n, m}));
   }
   for (int diff = 2; diff < k; diff++) {
     for (int i1 = 0; i1 < k-diff; i1++) {
@@ -156,17 +164,23 @@ void solve() {
       // remember we are in (given i1) land
 
       // P(i2 | i1)
-      long p = a_to_b_prob(objects[i1], objects[i2]);
+      long p = a_to_b_prob(objects[i1], objects[i2], {n, m});
+      fprintf(stderr, "a to b prob of i1=%d to i2=%d: %ld\n", i1, i2, p);
 
-      // subtract P(mid | i1) * P(mid was last before hitting i2 | mid)    for each mid
+      // subtract P(mid | i1, i2) * P(mid was last before hitting i2 | mid)    for each mid
       for (int mid = i1+1; mid < i2; mid++) {
-        long mid_given_i1 = a_to_b_prob(objects[i1], objects[mid]);
+        long mid_given_i1 = a_to_b_prob(objects[i1], objects[mid], objects[i2]);
         long mid_is_last = conditional_probabilities[mid][i2];  assert(mid_is_last != -1);
         long pp = (mid_given_i1 * mid_is_last) % MOD;
         p = (p - pp + MOD) % MOD;
       }
 
       conditional_probabilities[i1][i2] = p;
+    }
+  }
+  for (int i = 0; i < k; i++) {
+    for (int j = i+1; j < k; j++) {
+      fprintf(stderr, "[%d](%d %d) [%d](%d %d) has cond prob %ld\n", i, objects[i].a, objects[i].b, j, objects[j].a, objects[j].b, conditional_probabilities[i][j]);
     }
   }
 
@@ -179,12 +193,14 @@ void solve() {
     // multiply by expectation at that point
     // the remainder is if we hit nothing (total_probability)
     for (int j = 0; j < i; j++) {
-      long hitj_prob = a_to_b_prob({0, 0}, objects[j]);
+      long hitj_prob = a_to_b_prob({0, 0}, objects[j], objects[i]);
       long jlast_prob = conditional_probabilities[j][i];
       long prob = (hitj_prob * jlast_prob) % MOD;
       total_probability = (total_probability + prob) % MOD;
 
-      long ev_contrib = (prob * expectations[j]) % MOD;
+      // value = EV from j + vanilla gained between us and j
+      long val = (expectations[j] + 2*(objects[i].a-objects[j].a) + (objects[i].b - objects[j].b)) % MOD;
+      long ev_contrib = (prob * val) % MOD;
       expectation_before_doubling += ev_contrib;
       expectation_before_doubling %= MOD;
     }
@@ -195,7 +211,7 @@ void solve() {
   }
 
   long ev = expectations[k-1];
-  ev = (ev * modular_inverse(2)) % MOD;
+  if (extra_final)  ev = (ev * modular_inverse(2)) % MOD;
   cout << ev << "\n";
 
 }
