@@ -169,6 +169,7 @@ void solve() {
   }
 
   // now walk from l to l+n (n+1 total)
+  // no you fucking idiot, you have to go to the STRICTLY next root (up to n MORE - current root does not count)
   for (long k = l; k <= l+n; k++) {
     vector<long> limits = fill(n, k);
     vector<StateHard> dp(n+1);
