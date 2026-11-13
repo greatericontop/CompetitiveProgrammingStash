@@ -125,7 +125,7 @@ void solve() {
     sorted.insert(sorted.end(), ones.begin(), ones.end());
   };
 
-  vector<int> answers(n+1);
+  vector<int> answers(m+1);
   answers[1] = sorted[n-1];
   for (int x = m; x > 1; x--) {
     // roll everything backward by 1
